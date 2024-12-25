@@ -1,0 +1,7 @@
+CREATE TABLE Passport_RF
+(
+	id_Passport_RF SERIAL PRIMARY KEY,
+	serias VARCHAR(4) NOT NULL,
+	number VARCHAR(6) NOT NULL,
+	registration_address VARCHAR(300) NOT NULL 
+);
