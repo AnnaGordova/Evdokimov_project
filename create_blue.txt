@@ -5,3 +5,12 @@ CREATE TABLE Passport_RF
 	number VARCHAR(6) NOT NULL,
 	registration_address VARCHAR(300) NOT NULL 
 );
+
+CREATE TABLE International_passport
+(
+	id_International_passport SERIAL PRIMARY KEY,
+	serias VARCHAR(2) NOT NULL,
+	number VARCHAR(7) NOT NULL,
+	registration_address VARCHAR(300) NOT NULL, 
+	valid_until DATE NOT NULL
+);
