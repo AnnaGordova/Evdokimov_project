@@ -17,6 +17,15 @@ CREATE TABLE Worklog
 	time_end TIME,
 	overtime NUMERIC(5, 2),
 	undertime NUMERIC(5, 2),
-	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE,
+	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
  
+);
+
+CREATE TABLE Weekly_report
+(
+	id_weekly_report SERIAL PRIMARY KEY,
+	date_create TIMESTAMP,
+	is_confirmed ENUM("подтвержден", "не подтвержден"),
+	note VARCHAR(255),
+	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
 );
