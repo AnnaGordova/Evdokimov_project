@@ -1,32 +1,10 @@
-CREATE TABLE Passport_RF --Паспорт РФ
+CREATE TABLE Passport_catalogue 
 (
-	id_Passport_RF SERIAL PRIMARY KEY,
-	serias VARCHAR(4) NOT NULL,
-	number VARCHAR(6) NOT NULL,
-	registration_address VARCHAR(300) NOT NULL 
+	id_passport SERIAL PRIMARY KEY,
+	serias VARCHAR(4),
+	number VARCHAR(6),
+	registration_address VARCHAR(255),
+	country VARCHAR(255),
+	valid_until DATE 
 );
 
-CREATE TABLE International_passport --Загранпаспорт
-(
-	id_International_passport SERIAL PRIMARY KEY,
-	serias VARCHAR(2) NOT NULL,
-	number VARCHAR(7) NOT NULL,
-	registration_address VARCHAR(300) NOT NULL, 
-	valid_until DATE NOT NULL
-);
-
-CREATE TABLE Accounting_of_working_hours --Учет рабочего времени
-(
-	id_Accounting_of_working_hours SERIAL PRIMARY KEY,
-	date_work DATE,
-	time_start TIME,
-	time_finish TIME,
-	overtime_processing NUMERIC(5, 2),
-	flaw NUMERIC(5, 2),
-	id_employees INTEGER,
-	FOREIGN KEY (id_employees) REFERENCES Employees (id_employees) 
-);
-
-CREATE TABLE Employees --справочник сотрудников
-(
-);
