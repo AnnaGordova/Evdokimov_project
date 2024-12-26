@@ -8,3 +8,15 @@ CREATE TABLE Passport_catalogue
 	valid_until DATE 
 );
 
+CREATE TABLE Worklog 
+(
+	id_worklog SERIAL PRIMARY KEY,
+	date_start DATE,
+	date_end DATE,
+	time_start TIME,
+	time_end TIME,
+	overtime NUMERIC(5, 2),
+	undertime NUMERIC(5, 2),
+	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE,
+ 
+);
