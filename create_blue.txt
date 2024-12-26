@@ -29,3 +29,25 @@ CREATE TABLE Weekly_report
 	note VARCHAR(255),
 	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE Absence
+(
+	id_absence SERIAL PRIMARY KEY,
+	date_start DATE,
+	date_end DATE,
+	type VARCHAR(255),
+	supporting_document VARCHAR(255),
+	is_confirmed BOOLEAN,
+	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Post_catalogue
+(
+	id_post SERIAL PRIMARY KEY,
+	name VARCHAR(255),
+	description TEXT,
+	skill_level VARCHAR(50),
+	OKZ_code VARCHAR(20),
+	responsibilities TEXT,
+	status ENUM("открыта", "закрыта")
+);
