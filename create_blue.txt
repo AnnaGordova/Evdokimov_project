@@ -71,3 +71,12 @@ CREATE TABLE Worktime_catalogue
 	id_post INTEGER REFERNCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE Schedule_template
+(
+	id_template SERIAL PRIMARY KEY,
+	day_week INTEGER,
+	time_start TIME,
+	time_end TIME,
+	id_post INTEGER REFERNCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
