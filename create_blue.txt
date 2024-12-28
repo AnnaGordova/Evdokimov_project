@@ -51,3 +51,15 @@ CREATE TABLE Post_catalogue
 	responsibilities TEXT,
 	status ENUM("открыта", "закрыта")
 );
+
+CREATE TABLE Rate_catalogue
+(
+	id_rate SERIAL PRIMARY KEY,
+	name VARCHAR(255),
+	type VARCHAR(255),
+	size NUMBER(10, 2),
+	currency VARCHAR(3),
+	peridoicity VARCHAR(255),
+	id_post INTEGER REFERNCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
