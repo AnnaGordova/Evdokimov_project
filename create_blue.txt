@@ -80,3 +80,25 @@ CREATE TABLE Schedule_template
 	id_post INTEGER REFERNCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE Employee_catalogue
+(
+	id_employee SERIAL PRIMARY KEY,
+	surname VARCHAR(255),
+	name VARCHAR(255),
+	patronomyc VARCHAR(255),
+	birth DATE,
+	subdivision VARCHAR(255),
+	login VARCHAR(255),
+	password VARCHAR(255),
+	role VARCHAR(50),
+	work_number VARCHAR(20),
+	personal_number VARCHAR (20),
+	email VARCHAR(255),
+	gender ENUM("м", "ж"),
+	INN VARCHAR (12),
+	SNILS VARCHAR(11),
+	date_employment DATE,
+	citizenship ENUM("РФ", "Иностранное"),
+	id_passport INTEGER REFERNCES Passport_catalogue (id_passport) ON DELETE CASCADE ON UPDATE CASCADE,
+	id_post INTEGER REFERNCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
+);
