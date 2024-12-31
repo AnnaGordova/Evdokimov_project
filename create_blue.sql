@@ -30,7 +30,7 @@ CREATE TABLE Employee_catalogue
 	id_employee SERIAL PRIMARY KEY,
 	surname VARCHAR(255) NOT NULL,
 	name VARCHAR(255) NOT NULL,
-	patronomyc VARCHAR(255),
+	patronymic VARCHAR(255),
 	birth DATE NOT NULL,
 	subdivision VARCHAR(255) NOT NULL,
 	login VARCHAR(255) NOT NULL UNIQUE,
