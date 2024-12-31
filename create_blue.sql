@@ -9,8 +9,8 @@ CREATE TYPE enum_day_week_Schedule_template AS ENUM('ПН', 'ВТ', 'СР', 'Ч�
 CREATE TABLE Passport_catalogue 
 (
 	id_passport SERIAL PRIMARY KEY,
-	serias CHAR(4) NOT NULL,
-	number CHAR(6) NOT NULL,
+	serias CHAR(4) NOT NULL UNIQUE,
+	number CHAR(6) NOT NULL UNIQUE,
 	registration_address VARCHAR(255) NOT NULL,
 	country CHAR(2) NOT NULL
 );
@@ -21,7 +21,7 @@ CREATE TABLE Post_catalogue
 	name VARCHAR(255) NOT NULL,
 	description TEXT NOT NULL,
 	skill_level enum_skill_level_Post_catalogue NOT NULL,
-	OKZ_code CHAR(7) NOT NULL,
+	OKZ_code CHAR(7) NOT NULL UNIQUE,
 	responsibilities TEXT NOT NULL,
 );
 
@@ -33,15 +33,15 @@ CREATE TABLE Employee_catalogue
 	patronomyc VARCHAR(255),
 	birth DATE NOT NULL,
 	subdivision VARCHAR(255) NOT NULL,
-	login VARCHAR(255) NOT NULL,
+	login VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
 	role VARCHAR(50) NOT NULL,
-	work_number CHAR(9) NOT NULL,
-	personal_number CHAR (15) NOT NULL,
-	email VARCHAR(255) NOT NULL,
+	work_number CHAR(9) NOT NULL UNIQUE,
+	personal_number CHAR (15) NOT NULL UNIQUE,
+	email VARCHAR(255) NOT NULL UNIQUE,
 	gender enum_gender_Employee_catalogue NOT NULL,
-	INN CHAR (12) NOT NULL,
-	SNILS CHAR(11) NOT NULL,
+	INN CHAR (12) NOT NULL UNIQUE,
+	SNILS CHAR(11) NOT NULL UNIQUE,
 	date_employment DATE NOT NULL,
 	citizenship enum_citizenship_Employee_catalogue NOT NULL,
 	id_passport INTEGER NOT NULL REFERENCES Passport_catalogue (id_passport) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -89,7 +89,7 @@ CREATE TABLE Absence
 CREATE TABLE Rate_catalogue
 (
 	id_rate SERIAL PRIMARY KEY,
-	name VARCHAR(100) NOT NULL,
+	name VARCHAR(100) NOT NULL UNIQUE,
 	type VARCHAR(100) NOT NULL,
 	size NUMERIC(10, 2) NOT NULL,
 	currency enum_currency_Rate_catalogue NOT NULL,
@@ -126,11 +126,11 @@ CREATE TABLE Contractor_catalogue
 	company_name VARCHAR(255) NOT NULL,
 	legal_address TEXT NOT NULL,
 	actual_address TEXT NOT NULL,
-	INN CHAR(10) NOT NULL,
-	OGRN CHAR(13) NOT NULL,
+	INN CHAR(10) NOT NULL UNIQUE,
+	OGRN CHAR(13) NOT NULL UNIQUE,
 	ownership_form VARCHAR(20) NOT NULL,
-	site VARCHAR(50) NOT NULL,
-	email VARCHAR(50) NOT NULL
+	site VARCHAR(50) NOT NULL UNIQUE,
+	email VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE Contact_catalogue
@@ -140,7 +140,7 @@ CREATE TABLE Contact_catalogue
 	name VARCHAR(255) NOT NULL,
 	patronomyc VARCHAR(255),
 	post VARCHAR(100) NOT NULL,
-	phone CHAR(15) NOT NULL,
-	email VARCHAR(255) NOT NULL,
+	phone CHAR(15) NOT NULL UNIQUE,
+	email VARCHAR(255) NOT NULL UNIQUE,
 	id_contractor INTEGER NOT NULL REFERENCES Contractor_catalogue (id_contractor) ON DELETE CASCADE ON UPDATE CASCADE
 );
