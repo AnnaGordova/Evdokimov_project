@@ -9,43 +9,43 @@ CREATE TYPE enum_day_week_Schedule_template AS ENUM('ПН', 'ВТ', 'СР', 'Ч�
 CREATE TABLE Passport_catalogue 
 (
 	id_passport SERIAL PRIMARY KEY,
-	serias CHAR(4),
-	number CHAR(6),
-	registration_address VARCHAR(255),
-	country CHAR(2)
+	serias CHAR(4) NOT NULL,
+	number CHAR(6) NOT NULL,
+	registration_address VARCHAR(255) NOT NULL,
+	country CHAR(2) NOT NULL
 );
 
 CREATE TABLE Post_catalogue
 (
 	id_post SERIAL PRIMARY KEY,
-	name VARCHAR(255),
-	description TEXT,
-	skill_level enum_skill_level_Post_catalogue,
-	OKZ_code CHAR(7),
-	responsibilities TEXT,
+	name VARCHAR(255) NOT NULL,
+	description TEXT NOT NULL,
+	skill_level enum_skill_level_Post_catalogue NOT NULL,
+	OKZ_code CHAR(7) NOT NULL,
+	responsibilities TEXT NOT NULL,
 );
 
 CREATE TABLE Employee_catalogue
 (
 	id_employee SERIAL PRIMARY KEY,
-	surname VARCHAR(255),
-	name VARCHAR(255),
+	surname VARCHAR(255) NOT NULL,
+	name VARCHAR(255) NOT NULL,
 	patronomyc VARCHAR(255),
-	birth DATE,
-	subdivision VARCHAR(255),
-	login VARCHAR(255),
-	password VARCHAR(255),
-	role VARCHAR(50),
-	work_number CHAR(9),
-	personal_number CHAR (15),
-	email VARCHAR(255),
-	gender enum_gender_Employee_catalogue,
-	INN CHAR (12),
-	SNILS CHAR(11),
-	date_employment DATE,
-	citizenship enum_citizenship_Employee_catalogue,
-	id_passport INTEGER REFERENCES Passport_catalogue (id_passport) ON DELETE CASCADE ON UPDATE CASCADE,
-	id_post INTEGER REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
+	birth DATE NOT NULL,
+	subdivision VARCHAR(255) NOT NULL,
+	login VARCHAR(255) NOT NULL,
+	password VARCHAR(255) NOT NULL,
+	role VARCHAR(50) NOT NULL,
+	work_number CHAR(9) NOT NULL,
+	personal_number CHAR (15) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	gender enum_gender_Employee_catalogue NOT NULL,
+	INN CHAR (12) NOT NULL,
+	SNILS CHAR(11) NOT NULL,
+	date_employment DATE NOT NULL,
+	citizenship enum_citizenship_Employee_catalogue NOT NULL,
+	id_passport INTEGER NOT NULL REFERENCES Passport_catalogue (id_passport) ON DELETE CASCADE ON UPDATE CASCADE,
+	id_post INTEGER NOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -53,35 +53,35 @@ CREATE TABLE Employee_catalogue
 CREATE TABLE Worklog 
 (
 	id_worklog SERIAL PRIMARY KEY,
-	date_start DATE,
-	date_end DATE,
-	time_start TIME,
-	time_end TIME,
+	date_start DATE NOT NULL,
+	date_end DATENOT NULL,
+	time_start TIME NOT NULL,
+	time_end TIME NOT NULL,
 	total_time NUMERIC(5, 2),
 	overtime NUMERIC(5, 2),
 	undertime NUMERIC(5, 2),
-	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
+	id_employee INTEGER NOT NULL REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
  
 );
 
 CREATE TABLE Weekly_report
 (
 	id_weekly_report SERIAL PRIMARY KEY,
-	date_create TIMESTAMP,
-	is_confirmed enum_is_confirmed_Weekly_report,
+	date_create TIMESTAMP NOT NULL,
+	is_confirmed enum_is_confirmed_Weekly_report NOT NULL,
 	note TEXT,
-	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
+	id_employee INTEGER NOT NULL REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Absence
 (
 	id_absence SERIAL PRIMARY KEY,
-	date_start DATE,
-	date_end DATE,
-	type VARCHAR(255),
+	date_start DATE NOT NULL,
+	date_end DATE NOT NULL,
+	type VARCHAR(255) NOT NULL,
 	supporting_document VARCHAR(255),
 	is_confirmed enum_is_confirmed_Absence,
-	id_employee INTEGER REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
+	id_employee INTEGER NOT NULL REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -89,32 +89,32 @@ CREATE TABLE Absence
 CREATE TABLE Rate_catalogue
 (
 	id_rate SERIAL PRIMARY KEY,
-	name VARCHAR(100),
-	type VARCHAR(100),
-	size NUMERIC(10, 2),
-	currency enum_currency_Rate_catalogue,
-	peridoicity VARCHAR(100),
-	id_post INTEGER REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
+	name VARCHAR(100) NOT NULL,
+	type VARCHAR(100) NOT NULL,
+	size NUMERIC(10, 2) NOT NULL,
+	currency enum_currency_Rate_catalogue NOT NULL,
+	peridoicity VARCHAR(100) NOT NULL,
+	id_post INTEGER NOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Worktime_catalogue
 (
 	id_worktime SERIAL PRIMARY KEY,
-	hours_count NUMERIC(5, 2),
-	shift_count INTEGER,
-	week_start_date DATE,
-	week_end_date DATE,
+	hours_count NUMERIC(5, 2) NOT NULL,
+	shift_count INTEGER NOT NULL,
+	week_start_date DATE NOT NULL,
+	week_end_date DATE NOT NULL,
 	comments TEXT,
-	id_post INTEGER REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
+	id_post INTEGERNOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Schedule_template
 (
 	id_template SERIAL PRIMARY KEY,
-	day_week enum_day_week_Schedule_template,
-	time_start TIME,
-	time_end TIME,
-	id_post INTEGER REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
+	day_week enum_day_week_Schedule_template NOT NULL,
+	time_start TIME NOT NULL,
+	time_end TIMENOT NULL,
+	id_post INTEGER NOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -123,24 +123,24 @@ CREATE TABLE Schedule_template
 CREATE TABLE Contractor_catalogue
 (
 	id_contractor SERIAL PRIMARY KEY,
-	company_name VARCHAR(255),
-	legal_address TEXT,
-	actual_address TEXT,
-	INN CHAR(10),
-	OGRN CHAR(13),
-	ownership_form VARCHAR(20),
-	site VARCHAR(50),
-	email VARCHAR(50)
+	company_name VARCHAR(255) NOT NULL,
+	legal_address TEXT NOT NULL,
+	actual_address TEXT NOT NULL,
+	INN CHAR(10) NOT NULL,
+	OGRN CHAR(13) NOT NULL,
+	ownership_form VARCHAR(20) NOT NULL,
+	site VARCHAR(50) NOT NULL,
+	email VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Contact_catalogue
 (
 	id_contact SERIAL PRIMARY KEY,
-	surname VARCHAR(255),
-	name VARCHAR(255),
+	surname VARCHAR(255) NOT NULL,
+	name VARCHAR(255) NOT NULL,
 	patronomyc VARCHAR(255),
-	post VARCHAR(100),
-	phone CHAR(15),
-	email VARCHAR(255),
-	id_contractor INTEGER REFERENCES Contractor_catalogue (id_contractor) ON DELETE CASCADE ON UPDATE CASCADE
+	post VARCHAR(100) NOT NULL,
+	phone CHAR(15) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	id_contractor INTEGER NOT NULL REFERENCES Contractor_catalogue (id_contractor) ON DELETE CASCADE ON UPDATE CASCADE
 );
