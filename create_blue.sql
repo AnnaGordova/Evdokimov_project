@@ -22,7 +22,7 @@ CREATE TABLE Post_catalogue
 	description TEXT NOT NULL,
 	skill_level enum_skill_level_Post_catalogue NOT NULL,
 	OKZ_code CHAR(7) NOT NULL UNIQUE,
-	responsibilities TEXT NOT NULL,
+	responsibilities TEXT NOT NULL
 );
 
 CREATE TABLE Employee_catalogue
@@ -54,7 +54,7 @@ CREATE TABLE Worklog
 (
 	id_worklog SERIAL PRIMARY KEY,
 	date_start DATE NOT NULL,
-	date_end DATENOT NULL,
+	date_end DATE NOT NULL,
 	time_start TIME NOT NULL,
 	time_end TIME NOT NULL,
 	total_time NUMERIC(5, 2),
@@ -105,7 +105,7 @@ CREATE TABLE Worktime_catalogue
 	week_start_date DATE NOT NULL,
 	week_end_date DATE NOT NULL,
 	comments TEXT,
-	id_post INTEGERNOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
+	id_post INTEGER NOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Schedule_template
@@ -113,7 +113,7 @@ CREATE TABLE Schedule_template
 	id_template SERIAL PRIMARY KEY,
 	day_week enum_day_week_Schedule_template NOT NULL,
 	time_start TIME NOT NULL,
-	time_end TIMENOT NULL,
+	time_end TIME NOT NULL,
 	id_post INTEGER NOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
