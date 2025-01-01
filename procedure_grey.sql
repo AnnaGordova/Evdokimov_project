@@ -60,3 +60,75 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE PROCEDURE price_formation(p_date DATE DEFAULT CURRENT_DATE)
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    rec RECORD;
+    min_price NUMERIC;
+    selected_price_list INT;
+    expired BOOLEAN;
+BEGIN
+    FOR rec IN
+        SELECT pc.id_product, pc.category_id, ps.id_price_list, ps.final_price
+        FROM product_card pc
+        LEFT JOIN prices ps ON pc.id_product = ps.id_product
+    LOOP
+        IF rec.id_price_list IS NULL THEN
+            SELECT MIN(pl.final_price)
+            INTO min_price
+            FROM price_list pl
+            WHERE pl.category_id = rec.category_id
+              AND pl.product_id = rec.id_product
+              AND pl.is_active = TRUE;
+
+            SELECT pl.id_price_list
+            INTO selected_price_list
+            FROM price_list pl
+            WHERE pl.final_price = min_price
+              AND pl.product_id = rec.id_product
+              AND pl.is_active = TRUE
+            LIMIT 1;
+
+            INSERT INTO prices(id_product, id_price_list, main_price)
+            VALUES (rec.id_product, selected_price_list, min_price);
+    
+        ELSE
+            IF rec.final_price <> (SELECT final_price FROM price_list WHERE id_price_list = rec.id_price_list) THEN
+                SELECT MIN(pl.final_price)
+                INTO min_price
+                FROM price_list pl
+                WHERE pl.category_id = rec.category_id
+                  AND pl.product_id = rec.id_product
+                  AND pl.is_active = TRUE;
+                SELECT pl.id_price_list
+                INTO selected_price_list
+                FROM price_list pl
+                WHERE pl.final_price = min_price
+                  AND pl.product_id = rec.id_product
+                  AND pl.is_active = TRUE
+                LIMIT 1;
+                UPDATE prices
+                SET id_price_list = selected_price_list, main_price = min_price
+                WHERE id_product = rec.id_product;
+            END IF;
+        END IF;
+
+        PERFORM product_expired(rec.id_product, p_date, expired);
+        IF expired THEN
+            SELECT MIN(pl.final_price)
+            INTO min_price
+            FROM price_list pl
+            WHERE pl.category_id = rec.category_id
+              AND pl.product_id = rec.id_product
+              AND pl.is_active = TRUE
+              AND pl.is_warehouse_price = TRUE;
+            UPDATE prices
+            SET id_price_list = selected_price_list, main_price = min_price
+            WHERE id_product = rec.id_product;
+        END IF;
+    END LOOP;
+END;
+$$;
+
