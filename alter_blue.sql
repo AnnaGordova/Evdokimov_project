@@ -41,6 +41,8 @@ ALTER TABLE Employee_catalogue
 ADD CONSTRAINT EMP_DATE_EMPLOYMENT_CHECK CHECK (date_employment >= '2010-01-01' AND date_employment <= CURRENT_DATE);
 
 
+  
+
 
 ALTER TABLE Passport_catalogue
 ADD CONSTRAINT PASSPORT_SERIES_CHECK CHECK (series ~ '^\d{4}$');
@@ -54,4 +56,13 @@ ADD CONSTRAINT PASSPORT_REGISTRATION_CHECK CHECK (registration_address ~ '^[a-zA
 ALTER TABLE Passport_catalogue
 ADD CONSTRAINT PASSPORT_COUNTRY_CHECK CHECK (country ~ '^[A-Za-z]{2}$');
 
+
+
+
+
+ALTER TABLE Post_catalogue
+ADD CONSTRAINT POST_NAME_CHECK CHECK (name ~ '^[а-яА-ЯёЁ\s-]+$');
+
+ALTER TABLE Post_catalogue
+ADD CONSTRAINT POST_OKZ_CHECK CHECK (OKZ_code ~ '^\d{3}\.\d{3}$');
 

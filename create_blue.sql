@@ -9,7 +9,7 @@ CREATE TYPE enum_day_week_Schedule_template AS ENUM('ПН', 'ВТ', 'СР', 'Ч�
 CREATE TABLE Passport_catalogue 
 (
 	id_passport SERIAL PRIMARY KEY,
-	serias CHAR(4) NOT NULL UNIQUE,
+	series CHAR(4) NOT NULL UNIQUE,
 	number CHAR(6) NOT NULL UNIQUE,
 	registration_address VARCHAR(255) NOT NULL,
 	country CHAR(2) NOT NULL
