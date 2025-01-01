@@ -118,3 +118,35 @@ ADD CONSTRAINT CONTACT_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9
 
 
 
+
+
+ALTER TABLE Contractor_catalogue
+ADD CONSTRAINT CONTRACTOR_NAME_CHECK CHECK (company_name ~ '^[A-ZА-ЯЁ][a-zа-яё]+(-[A-ZА-ЯЁ][a-zа-яё]+)*$');
+
+ALTER TABLE Contractor_catalogue
+ADD CONSTRAINT CONTRACTOR_LEGAL_ADDR_CHECK CHECK (legal_address ~ '^[a-zA-Zа-яА-Я0-9,.\(\)/ -]*$');
+
+ALTER TABLE Contractor_catalogue
+ADD CONSTRAINT CONTRACTOR_ACTUAL_ADDR_CHECK CHECK (actual_address ~ '^[a-zA-Zа-яА-Я0-9,.\(\)/ -]*$');
+
+ALTER TABLE Contractor_catalogue
+ADD CONSTRAINT CONTRACTOR_INN_CHECK CHECK (INN ~ '^\d{10}$');
+
+ALTER TABLE Contractor_catalogue
+ADD CONSTRAINT CONTRACTOR_OGRN_CHECK CHECK (OGRN ~ '^\d{13}$');
+
+ALTER TABLE Contractor_catalogue
+ADD CONSTRAINT CONTRACTOR_FORM_CHECK CHECK (ownership_form ~ '^[A-ZА-ЯЁ][a-zа-яё]+(-[A-ZА-ЯЁ][a-zа-яё]+)*$');
+
+ALTER TABLE Contractor_catalogue
+ADD CONSTRAINT CONTRACTOR_SITE_CHECK CHECK (site ~* '^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(/[\w&%+/$=]*)?$');
+
+ALTER TABLE Contractor_catalogue
+ADD CONSTRAINT CONTRACTOR_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$');
+
+
+
+
+
+
+
