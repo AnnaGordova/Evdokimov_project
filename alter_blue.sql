@@ -40,3 +40,18 @@ ADD CONSTRAINT EMP_SNILS_CHECK CHECK (SNILS ~ '^\d{11}$');
 ALTER TABLE Employee_catalogue
 ADD CONSTRAINT EMP_DATE_EMPLOYMENT_CHECK CHECK (date_employment >= '2010-01-01' AND date_employment <= CURRENT_DATE);
 
+
+
+ALTER TABLE Passport_catalogue
+ADD CONSTRAINT PASSPORT_SERIES_CHECK CHECK (series ~ '^\d{4}$');
+
+ALTER TABLE Passport_catalogue
+ADD CONSTRAINT PASSPORT_NUMBER_CHECK CHECK (number ~ '^\d{6}$');
+
+ALTER TABLE Passport_catalogue
+ADD CONSTRAINT PASSPORT_REGISTRATION_CHECK CHECK (registration_address ~ '^[a-zA-Zа-яА-Я0-9,.\(\)/ -]*$');
+
+ALTER TABLE Passport_catalogue
+ADD CONSTRAINT PASSPORT_COUNTRY_CHECK CHECK (country ~ '^[A-Za-z]{2}$');
+
+
