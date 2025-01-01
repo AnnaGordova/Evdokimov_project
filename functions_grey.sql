@@ -1,3 +1,4 @@
+$$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION product_expired(
     p_id_product product_card.id_product%type,
     p_date DATE DEFAULT CURRENT_DATE
@@ -27,4 +28,4 @@ BEGIN
         RETURN FALSE;
     END IF;
 END;
-$$ LANGUAGE plpgsql;
+
