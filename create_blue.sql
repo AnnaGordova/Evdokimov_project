@@ -138,7 +138,7 @@ CREATE TABLE Contact_catalogue
 	id_contact SERIAL PRIMARY KEY,
 	surname VARCHAR(255) NOT NULL,
 	name VARCHAR(255) NOT NULL,
-	patronomyc VARCHAR(255),
+	patronymic VARCHAR(255),
 	post VARCHAR(100) NOT NULL,
 	phone CHAR(15) NOT NULL UNIQUE,
 	email VARCHAR(255) NOT NULL UNIQUE,

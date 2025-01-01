@@ -93,3 +93,28 @@ ADD CONSTRAINT WORKTIME_HOURS_CHECK CHECK (hours_count BETWEEN 8 and 448);
 ALTER TABLE Worktime_catalogue
 ADD CONSTRAINT WORKTIME_SHIFT_CHECK CHECK (shift_count BETWEEN 0 AND 56);
 
+
+
+
+
+ALTER TABLE Contact_catalogue
+ADD CONSTRAINT CONTACT_SURNAME_CHECK CHECK (surname ~ '^[A-ZА-ЯЁ][a-zа-яё]+(-[A-ZА-ЯЁ][a-zа-яё]+)*$');
+
+ALTER TABLE Contact_catalogue
+ADD CONSTRAINT CONTACT_NAME_CHECK CHECK (name ~ '^[A-ZА-ЯЁ][a-zа-яё]+(-[A-ZА-ЯЁ][a-zа-яё]+)*$');
+
+ALTER TABLE Contact_catalogue
+ADD CONSTRAINT CONTACT_PATRONYMIC_CHECK CHECK (patronymic ~ '^[A-ZА-ЯЁ][a-zа-яё]+(-[A-ZА-ЯЁ][a-zа-яё]+)*$');
+
+ALTER TABLE Contact_catalogue
+ADD CONSTRAINT CONTACT_POST_CHECK CHECK (post ~ '^[A-ZА-ЯЁ][a-zа-яё]+(-[A-ZА-ЯЁ][a-zа-яё]+)*$');
+
+ALTER TABLE Contact_catalogue
+ADD CONSTRAINT CONTACT_PHONE_CHECK CHECK (phone ~ '^8-\d{3}-\d{3}-\d{2}-\d{2}$');
+
+ALTER TABLE Contact_catalogue
+ADD CONSTRAINT CONTACT_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$');
+
+
+
+
