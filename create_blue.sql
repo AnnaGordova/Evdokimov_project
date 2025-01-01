@@ -93,7 +93,7 @@ CREATE TABLE Rate_catalogue
 	type VARCHAR(100) NOT NULL,
 	size NUMERIC(10, 2) NOT NULL,
 	currency enum_currency_Rate_catalogue NOT NULL,
-	peridoicity VARCHAR(100) NOT NULL,
+	periodicity VARCHAR(100) NOT NULL,
 	id_post INTEGER NOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

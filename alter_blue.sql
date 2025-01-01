@@ -66,3 +66,18 @@ ADD CONSTRAINT POST_NAME_CHECK CHECK (name ~ '^[а-яА-ЯёЁ\s-]+$');
 ALTER TABLE Post_catalogue
 ADD CONSTRAINT POST_OKZ_CHECK CHECK (OKZ_code ~ '^\d{3}\.\d{3}$');
 
+
+
+
+
+ALTER TABLE Rate_catalogue
+ADD CONSTRAINT RATE_NAME_CHECK CHECK (name ~ '^[а-яА-ЯёЁ\s-]+$');
+
+ALTER TABLE Rate_catalogue
+ADD CONSTRAINT RATE_TYPE_CHECK CHECK (type ~ '^[а-яА-ЯёЁ\s-]+$');
+
+ALTER TABLE Rate_catalogue
+ADD CONSTRAINT RATE_SIZE_CHECK CHECK (size BETWEEN 10000 AND 1000000);
+
+ALTER TABLE Rate_catalogue
+ADD CONSTRAINT RATE_PERIODICITY_CHECK CHECK (periodicity ~ '^[а-яА-ЯёЁ\s-]+$');
