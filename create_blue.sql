@@ -9,7 +9,7 @@ CREATE TYPE enum_day_week_Schedule_template AS ENUM('ПН', 'ВТ', 'СР', 'Ч�
 CREATE TABLE Passport_catalogue 
 (
 	id_passport SERIAL PRIMARY KEY,
-	serias CHAR(4) NOT NULL UNIQUE,
+	series CHAR(4) NOT NULL UNIQUE,
 	number CHAR(6) NOT NULL UNIQUE,
 	registration_address VARCHAR(255) NOT NULL,
 	country CHAR(2) NOT NULL
@@ -93,7 +93,7 @@ CREATE TABLE Rate_catalogue
 	type VARCHAR(100) NOT NULL,
 	size NUMERIC(10, 2) NOT NULL,
 	currency enum_currency_Rate_catalogue NOT NULL,
-	peridoicity VARCHAR(100) NOT NULL,
+	periodicity VARCHAR(100) NOT NULL,
 	id_post INTEGER NOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -138,7 +138,7 @@ CREATE TABLE Contact_catalogue
 	id_contact SERIAL PRIMARY KEY,
 	surname VARCHAR(255) NOT NULL,
 	name VARCHAR(255) NOT NULL,
-	patronomyc VARCHAR(255),
+	patronymic VARCHAR(255),
 	post VARCHAR(100) NOT NULL,
 	phone CHAR(15) NOT NULL UNIQUE,
 	email VARCHAR(255) NOT NULL UNIQUE,
