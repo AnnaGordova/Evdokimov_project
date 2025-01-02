@@ -11,7 +11,7 @@ ALTER TABLE Employee_catalogue
 ADD CONSTRAINT EMP_BIRTH_CHECK CHECK (birth <= CURRENT_DATE - INTERVAL '18 years' AND birth >= CURRENT_DATE - INTERVAL '100 years');
 
 ALTER TABLE Employee_catalogue
-ADD CONSTRAINT EMP_SUBDIVISION_CHECK CHECK (subdivision ~ '^[A-Za-zА-Яа-яЁё]+$');
+ADD CONSTRAINT EMP_SUBDIVISION_CHECK CHECK (subdivision ~ '^[A-Za-zА-Яа-яЁё ]+$');
 
 ALTER TABLE Employee_catalogue
 ADD CONSTRAINT EMP_LOGIN_CHECK CHECK (login ~ '^[A-Za-z0-9!@#$%^&*()_+=-]+$');
@@ -29,7 +29,7 @@ ALTER TABLE Employee_catalogue
 ADD CONSTRAINT EMP_PERS_NUMBER_CHECK CHECK (personal_number ~ '^8-\d{3}-\d{3}-\d{2}-\d{2}$');
 
 ALTER TABLE Employee_catalogue
-ADD CONSTRAINT EMP_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$');
+ADD CONSTRAINT EMP_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
 
 ALTER TABLE Employee_catalogue
 ADD CONSTRAINT EMP_INN_CHECK CHECK (INN ~ '^\d{12}$');
@@ -113,7 +113,7 @@ ALTER TABLE Contact_catalogue
 ADD CONSTRAINT CONTACT_PHONE_CHECK CHECK (phone ~ '^8-\d{3}-\d{3}-\d{2}-\d{2}$');
 
 ALTER TABLE Contact_catalogue
-ADD CONSTRAINT CONTACT_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$');
+ADD CONSTRAINT CONTACT_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
 
 
 
@@ -142,7 +142,7 @@ ALTER TABLE Contractor_catalogue
 ADD CONSTRAINT CONTRACTOR_SITE_CHECK CHECK (site ~* '^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(/[\w&%+/$=]*)?$');
 
 ALTER TABLE Contractor_catalogue
-ADD CONSTRAINT CONTRACTOR_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$');
+ADD CONSTRAINT CONTRACTOR_EMAIL_CHECK CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
 
 
 
