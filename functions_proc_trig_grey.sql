@@ -127,6 +127,7 @@ $$;
 
 
 -----------------
+--- НЕТУ ТАБЛИЦ
 
 CREATE OR REPLACE FUNCTION product_expired(
     p_id_product INT,
@@ -213,6 +214,8 @@ CREATE TYPE new_prices AS (
     prom_text VARCHAR(255),
     id_shelf INT
 );
+
+-- НЕТУУУУУУУУУУУУУУУУУУУ
 
 CREATE OR REPLACE FUNCTION get_new_prices(p_date DATE DEFAULT CURRENT_DATE)
 RETURNS SETOF new_prices AS $$
