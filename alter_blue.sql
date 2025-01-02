@@ -194,3 +194,10 @@ ADD CONSTRAINT ABSENCE_TYPE_CHECK CHECK (type ~ '^[a-zA-Zа-яА-Я0-9,.\(\)/ -]
 ALTER TABLE Absence
 ADD CONSTRAINT ABSENCE_DOC_CHECK CHECK (supporting_document ~ '^[a-zA-Zа-яА-Я0-9,.\(\)/ -]*$');
 
+
+
+
+
+
+ALTER TABLE Employee_session
+ADD CONSTRAINT SESSION_DATE_CHECK CHECK(EXTRACT(YEAR FROM event_date) = EXTRACT(YEAR FROM CURRENT_DATE));

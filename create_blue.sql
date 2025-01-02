@@ -5,6 +5,7 @@ CREATE TYPE enum_is_confirmed_Weekly_report AS ENUM('подтвержден', '�
 CREATE TYPE enum_is_confirmed_Absence AS ENUM('подтвержден', 'не подтвержден');
 CREATE TYPE enum_currency_Rate_catalogue AS ENUM('USD', 'EUR', 'RUB', 'GBP', 'JPY');
 CREATE TYPE enum_day_week_Schedule_template AS ENUM('ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС');
+CREATE TYPE enum_session_event_Employee_session AS ENUM('login', 'logout');
 
 CREATE TABLE Passport_catalogue 
 (
@@ -143,4 +144,17 @@ CREATE TABLE Contact_catalogue
 	phone CHAR(15) NOT NULL UNIQUE,
 	email VARCHAR(255) NOT NULL UNIQUE,
 	id_contractor INTEGER NOT NULL REFERENCES Contractor_catalogue (id_contractor) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+
+
+CREATE TABLE Employee_session
+(
+	id_session SERIAL PRIMARY KEY,
+	session_event enum_session_event_Employee_session NOT NULL,
+	event_date DATE DEFAULT NOW() NOT NULL,
+	event_time TIME DEFAULT NOW() NOT NULL,
+	id_employee INTEGER NOT NULL REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
 );
