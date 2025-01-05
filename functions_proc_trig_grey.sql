@@ -335,4 +335,128 @@ END;
 $$;
 
 
+-- ПРАВКА ПРОЦЕДУР И ФУНКЦИЙ ОТ ДЕНЗЕЛЯ --
+----------------------------------------------------------------------
 
+
+CREATE PROCEDURE add_product(
+    IN name VARCHAR(255),
+    IN height NUMERIC(10, 2),
+    IN width NUMERIC(10, 2),
+    IN length NUMERIC(10, 2),
+    IN expiration_date DATE,
+    IN SKU VARCHAR(32),
+    IN barcode_number VARCHAR(13),
+    IN is_stop BOOLEAN,
+    IN id_price INT,
+    IN id_manufacturer INT,
+    IN id_category INT,
+    IN id_unit INT
+)
+AS $$
+BEGIN
+    INSERT INTO Product_card (
+        name,
+        height,
+        width,
+        length,
+        expiration_date,
+        SKU,
+        barcode_number,
+        is_stop,
+        id_price,
+        id_manufacturer,
+        id_category,
+        id_unit
+    )
+    VALUES (
+        name,
+        height,
+        width,
+        length,
+        expiration_date,
+        SKU,
+        barcode_number,
+        is_stop,
+        id_price,
+        id_manufacturer,
+        id_category,
+        id_unit
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+---------------------------------------------------------------------------
+
+CREATE PROCEDURE update_price(
+    IN id_price_list INT,
+    IN entrance_price NUMERIC(10, 2),
+    IN final_price NUMERIC(10, 2)
+)
+AS $$
+BEGIN
+    UPDATE Price_List
+    SET entrance_price = entrance_price,
+        final_price = final_price
+    WHERE id_price_list = id_price_list;
+END;
+$$ LANGUAGE plpgsql;
+
+---------------------------------------------------------------------------
+
+CREATE PROCEDURE add_category(
+    IN name VARCHAR(255),
+    IN id_category_markup INT
+)
+AS $$
+BEGIN
+    INSERT INTO Product_category (
+        name,
+        id_category_markup
+    )
+    VALUES (
+        name,
+        id_category_markup
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE FUNCTION get_total_sales()
+RETURNS INT
+AS $$
+BEGIN
+    RETURN (
+        SELECT SUM(quantity)
+        FROM Sale
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+---------------------------------------------------------------------------
+
+CREATE FUNCTION get_new_prices(P_date DATE) RETURNS TABLE(
+    id_product INTEGER,
+    product_name VARCHAR(255),
+    expiration_date DATE,
+    quantity_on_shelf INTEGER,
+    price NUMERIC,
+    promotion_price NUMERIC
+)
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            pc.id_product,
+            pc.product_name,
+            pc.expiration_date,
+            pos.quantity_on_shelf,
+            p.price,
+            pc.promotion_price
+        FROM Product_card pc
+        JOIN Product_on_shelf pos ON pc.id_product = pos.id_product
+        JOIN Prices p ON pc.id_product = p.id_product
+        WHERE pc.is_stop = 1;
+END;
+$$ LANGUAGE plpgsql;
