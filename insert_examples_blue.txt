@@ -1,0 +1,12 @@
+INSERT INTO Passport_catalogue (series, number, registration_address, country)
+VALUES ('1111', '111111', 'Краснодарский край, село светлое, ул. нефильтрованная 9 кв. 9', 'RU');
+
+
+INSERT INTO Post_catalogue (name, description, skill_level, OKZ_code, responsibilities)
+VALUES ('Медбрат', 'Медбрат - это медицинский брат', 'средний', '111.111', 'Обязан лечить людей');
+
+INSERT INTO Employee_catalogue (surname, name, patronymic, birth, subdivision, login, password,
+							   role, work_number, personal_number, email, gender, INN, SNILS, date_employment,
+							   citizenship, id_passport, id_post) 
+VALUES ('Пьянов', 'Ефим', 'Федорович', '03.01.2004', 'Отделпоборьбесалкоголизмом', 'pyan_fed', 'baltyka_9', 'Медбрат', 
+		'8-800-333', '8-905-635-00-17', 'pyan_fed@mail.ru', 'м', '111111111111', '11111111111', '31.12.2024', 'РФ', 2, 1); 
