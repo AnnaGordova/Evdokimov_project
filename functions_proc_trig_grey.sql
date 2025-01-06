@@ -7,6 +7,7 @@ CREATE OR REPLACE PROCEDURE change_price_list(
 LANGUAGE plpgsql
 AS
 $$
+-- Объявляем переменные
 DECLARE
     v_current_price NUMERIC(10, 2);
     v_category_id INT;
@@ -15,17 +16,21 @@ DECLARE
     v_last_price NUMERIC(10, 2);
     v_is_stop BOOLEAN := FALSE;
 BEGIN
+    -- Получаем текущую цену и категорию продукта
     SELECT final_price, id_product INTO v_current_price, v_category_id
     FROM price_list
     WHERE id_price_list = p_id_price_list;
+    -- Получаем наценку и допустимое изменение цены для категории продукта
     SELECT percent_markup, percent_delta INTO v_markup_percent, v_delta_percent
     FROM markup_category
     JOIN product_category ON markup_category.id_category_markup = product_category.id_category_markup
     WHERE product_category.id_category = v_category_id;
+    -- Проверяем, не превышает ли новая цена допустимый предел
     IF p_new_price > v_current_price * (1 + v_markup_percent / 100) THEN
         v_is_stop := TRUE;
     END IF;
 
+    -- Проверяем, не превышает ли изменение цены допустимый процент
     SELECT final_price INTO v_last_price
     FROM price_list
     WHERE id_product = (SELECT id_product FROM price_list WHERE id_price_list = p_id_price_list)
@@ -34,13 +39,15 @@ BEGIN
     IF ABS(p_new_price - v_last_price) > v_last_price * (v_delta_percent / 100) THEN
         v_is_stop := TRUE;
     END IF;
-
+    
+    -- Если новой ценой превышены допустимые пределы, останавливаем продажу продукта
     IF v_is_stop THEN
         UPDATE product_card
         SET is_stop = TRUE
         WHERE id_product = (SELECT id_product FROM price_list WHERE id_price_list = p_id_price_list);
     END IF;
 
+    -- Обновляем цену продукта
     UPDATE price_list
     SET final_price = p_new_price
     WHERE id_price_list = p_id_price_list;
@@ -51,18 +58,22 @@ $$;
 
 
 ----------------------------------------------------------------------
-
+-- Создаем функцию-триггер для отслеживания изменений цены
 create FUNCTION trg_add_price_jr()
 RETURNS TRIGGER AS $$
 BEGIN
+    -- Если новая цена отличается от старой
     IF NEW.final_price <> OLD.final_price THEN
+        -- Вставляем запись в таблицу с историей цен
         INSERT INTO prices_jr (old_price, new_price, date_create, id_price_list)
         VALUES (OLD.final_price, NEW.final_price, CURRENT_DATE, NEW.id_price_list);
     END IF;
+    -- Возвращаем новую цену
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+-- Создаем триггер, который будет вызывать функцию-триггер после обновления поля final_price в таблице price_list
 CREATE TRIGGER add_price_jr
 AFTER UPDATE OF final_price
 ON price_list
@@ -72,7 +83,6 @@ EXECUTE FUNCTION trg_add_price_jr();
 ----------------------------------------------------------------------
 
 --- у меня нет таблиц sales, accepatance of goods
-
 -- Процедура price_formation
 
 CREATE OR REPLACE PROCEDURE price_formation(p_date DATE DEFAULT current_date)
@@ -83,11 +93,14 @@ DECLARE
     min_price_list INT;
     prod_expired BOOLEAN;
 BEGIN
+    -- Итерируемся по всем продуктам
     FOR rec IN
         SELECT p.id_product, p.id_price, p.id_category, p.id_unit, p.id_manufacturer
         FROM product_card p
     LOOP
+        -- Если у продукта еще нет цены
         IF rec.id_price IS NULL THEN
+        -- Находим минимальную цену для этого продукта на заданную дату
             SELECT MIN(pl.final_price), pl.id_price_list
             INTO min_price, min_price_list
             FROM price_list pl
@@ -95,9 +108,11 @@ BEGIN
               AND pl.date_create <= p_date
               AND pl.date_end >= p_date
             GROUP BY pl.id_product;
+            -- Вставляем новую запись в таблицу цен с минимальной ценой
             INSERT INTO prices (main_price, date_create, id_price_list)
             VALUES (min_price, p_date, min_price_list);
         ELSE
+            -- Находим минимальную цену для этого продукта на заданную дату из существующих цен
             SELECT pl.final_price, pl.id_price_list
             INTO min_price, min_price_list
             FROM price_list pl
@@ -106,13 +121,18 @@ BEGIN
               AND pl.date_create <= p_date
               AND pl.date_end >= p_date
             LIMIT 1;
+            -- Если найденная минимальная цена отличается от текущей цены продукта
             IF rec.id_price <> min_price_list THEN
+                -- Вставляем новую запись в таблицу цен с минимальной ценой
                 INSERT INTO prices (main_price, date_create, id_price_list)
                 VALUES (min_price, p_date, min_price_list);
             END IF;
         END IF;
+        -- Выполняем функцию проверки срока годности продукта
         PERFORM product_expired(rec.id_product, p_date);
+        -- Если продукт просрочен
         IF FOUND THEN
+            -- Находим минимальную цену для просроченного продукта на заданную дату
             SELECT MIN(pl.final_price), pl.id_price_list
             INTO min_price, min_price_list
             FROM price_list pl
@@ -120,6 +140,7 @@ BEGIN
               AND pl.date_create <= p_date
               AND pl.date_end >= p_date
             GROUP BY pl.id_product;
+            -- Обновляем цену просроченного продукта в таблице цен
             UPDATE prices
             SET main_price = min_price, id_price_list = min_price_list
             WHERE id_product = rec.id_product;
@@ -145,6 +166,7 @@ DECLARE
     expiration_date DATE;
     remaining_stock NUMERIC(10, 2);
 BEGIN
+    -- Получаем дату истечения срока годности продукта
     SELECT expiration_date
     INTO expiration_date
     FROM product_card
@@ -152,19 +174,24 @@ BEGIN
     IF expiration_date <= p_date THEN
         RETURN TRUE;
     END IF;
+    -- Получаем общее количество проданного продукта
     SELECT COALESCE(SUM(sale_quantity), 0)
     INTO total_sales
     FROM sales
     WHERE product_id = p_id_product
       AND sale_date <= p_date;
+    -- Получаем общее количество поступившего продукта
     SELECT COALESCE(SUM(received_quantity), 0)
     INTO total_received
     FROM acceptance_of_goods
     WHERE product_id = p_id_product
       AND acceptance_date <= p_date;
+    -- Рассчитываем общее количество продукта в наличии
     total_in_stock := total_received - total_sales;
+    -- Рассчитываем процент оставшегося продукта
     remaining_stock := (total_in_stock / total_received) * 100;
 
+    -- Проверяем, осталось ли менее 10% продукта
     IF remaining_stock <= 10 THEN
         RETURN TRUE;  
     ELSE
@@ -190,6 +217,7 @@ RETURNS SETOF stop_table AS $$
 DECLARE
     product_record RECORD;
 BEGIN
+    -- Итерируемся по всем продуктам с установленным флагом остановки продаж
     FOR product_record IN
         SELECT 
             p.id_product,
@@ -200,12 +228,15 @@ BEGIN
         JOIN price_list pl ON p.id_product = pl.id_product
         WHERE p.is_stop = TRUE
     LOOP
+        -- Снимаем флаг остановки продаж для продукта
         UPDATE product_card
         SET is_stop = FALSE
         WHERE id_product = product_record.id_product;
+        -- Возвращаем текущую запись продукта
         RETURN NEXT product_record;
     END LOOP;
 
+    -- Если в таблице нет продуктов с установленным флагом остановки продаж, то возвращаем пустое множество
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
@@ -231,6 +262,7 @@ RETURNS SETOF new_prices AS $$
 DECLARE
     new_price_record RECORD;
 BEGIN
+    -- Итерируемся по всем продуктам с установленным флагом остановки продаж и получившим новую цену на заданную дату
     FOR new_price_record IN
         SELECT 
             p.id_product,
@@ -248,13 +280,16 @@ BEGIN
         WHERE p.is_stop = TRUE
         AND pr.date_create = p_date
     LOOP
+        -- Возвращаем текущую запись с информацией о новом продукте и его цене
         RETURN NEXT new_price_record;
     END LOOP;
 
+    -- Если в таблице нет продуктов с установленным флагом остановки продаж и получивших новую цену на заданную дату, то возвращаем пустое множество
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
 
+-- Пример использования функции
 SELECT * FROM get_new_prices('2025-01-01');
 
 ----------------------------------------------------------------------
