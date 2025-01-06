@@ -15,8 +15,8 @@ VALUES ('Пьянов', 'Ефим', 'Федорович', '03.01.2004', 'Отд�
 
 -------для add_worklog----
 
-INSERT INTO Schedule_template (day_week, time_start, time_end, id_post)
-VALUES ('ПН', '08:00:00', '17:00:00', 1);
+INSERT INTO Schedule_template (time_start, time_end, id_post)
+VALUES ('08:00:00', '17:00:00', 1);
 
 INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
 VALUES ('login', '06-01-2025','08:10:00', 14);
@@ -24,3 +24,56 @@ VALUES ('login', '06-01-2025','08:10:00', 14);
 INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
 VALUES ('logout', '06-01-2025','16:50:00', 14);
 
+-------для generate_weekly_report----
+
+Еще один день недели для Пьянова
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('login', '07-01-2025','08:00:00', 14);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('logout', '07-01-2025','14:00:00', 14);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('login', '08-01-2025','07:50:00', 14);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('logout', '08-01-2025','18:00:00', 14);
+
+СОздаем нового сотрудника
+
+INSERT INTO Passport_catalogue (series, number, registration_address, country)
+VALUES ('1112', '111112', 'Краснодарский край, село прозвонное, ул. недозвоннвя 5 кв. 5', 'RU');
+
+
+INSERT INTO Post_catalogue (name, description, skill_level, OKZ_code, responsibilities)
+VALUES ('Оператор колл-центра', 'Оператор колл-центра - дрыц-дрыц к телефону', 'низкий', '111.112', 'Обязан отвечать людям на звонки');
+
+INSERT INTO Employee_catalogue (surname, name, patronymic, birth, subdivision, login, password,
+							   role, work_number, personal_number, email, gender, INN, SNILS, date_employment,
+							   citizenship, id_passport, id_post) 
+VALUES ('Шушыкина', 'Наталья', 'Владимировна', '15.02.1987', 'Коллцентр', 'shush_nat', 'shushushu_1', 'Оператор горячей линии', 
+		'8-800-334', '8-800-555-35-35', 'shush_nat@gmail.com', 'ж', '111111111112', '11111111112', '11.09.2013', 'РФ', 3, 2); 
+
+
+
+INSERT INTO Schedule_template (time_start, time_end, id_post)
+VALUES ('08:00:00', '17:00:00', 2);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('login', '06-01-2025','08:00:00', 19);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('logout', '06-01-2025','17:00:00', 19);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('login', '07-01-2025','08:00:00', 19);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('logout', '07-01-2025','16:00:00', 19);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('login', '08-01-2025','08:00:00', 19);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('logout', '08-01-2025','17:00:00', 19);

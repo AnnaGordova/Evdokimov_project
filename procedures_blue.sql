@@ -17,11 +17,11 @@ DECLARE
 	
 BEGIN
     SELECT event_time FROM Employee_session
-	WHERE (id_employee = p_id_employee AND session_event = 'login')
+	WHERE (id_employee = p_id_employee AND session_event = 'login' AND event_date = p_date_start)
 	INTO p_time_start;
 	
 	SELECT event_time FROM Employee_session
-	WHERE (id_employee = p_id_employee AND session_event = 'logout')
+	WHERE (id_employee = p_id_employee AND session_event = 'logout' AND event_date = p_date_start)
 	INTO p_time_end;
 	
 	SELECT St.time_start FROM Schedule_template as St, Employee_catalogue as Ec, Post_catalogue as Pc
@@ -58,6 +58,50 @@ END;
 $$;
 
 --CALL add_worklog(14, '06-01-2025')
+
+CREATE OR REPLACE PROCEDURE generate_weekly_report_one(
+    p_id_employee worklog.id_employee%type,
+	p_week_start_date DATE DEFAULT current_date,
+    p_week_end_date DATE DEFAULT current_date
+	
+)
+
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+	p_totaltime TIME;
+	p_undertime TIME;
+	p_overtime TIME;
+	p_note TEXT;
+BEGIN
+    SELECT SUM(w.total_time) 
+	FROM Worklog as w 
+	WHERE ('06-01-2025' <= w.date_start AND w.date_start <= '12-01-2025' AND w.id_employee = p_id_employee)
+	GROUP BY w.id_employee
+	INTO p_totaltime;
+	
+	SELECT  
+	SUM(w.undertime)
+	FROM Worklog as w 
+	WHERE ('06-01-2025' <= w.date_start AND w.date_start <= '12-01-2025' AND w.id_employee = p_id_employee)
+	GROUP BY w.id_employee
+	INTO p_undertime;
+	
+	SELECT SUM(w.overtime) 
+	FROM Worklog as w 
+	WHERE ('06-01-2025' <= w.date_start AND w.date_start <= '12-01-2025' AND w.id_employee = p_id_employee)
+	GROUP BY w.id_employee
+	INTO p_overtime;
+	
+	
+	p_note := format('Всего отработано: %s, недоработки: %s, переработки: %s', p_totaltime, p_undertime, p_overtime);
+	
+	INSERT INTO Weekly_report (date_create, is_confirmed, note, id_employee)
+	VALUES (current_date, 'не подтвержден', p_note, p_id_employee);
+END;
+$$;
+
+--CALL generate_weekly_report_one(14, '06-01-2025', '12-01-2025');
 
 CREATE OR REPLACE PROCEDURE add_absence(
 	p_date_start absence.date_start%type,

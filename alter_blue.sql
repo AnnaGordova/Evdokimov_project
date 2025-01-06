@@ -20,7 +20,7 @@ ALTER TABLE Employee_catalogue
 ADD CONSTRAINT EMP_PASSWORD_CHECK CHECK (LENGTH(password) > 8 AND password ~ '^[A-Za-z0-9!@#$%^&*()_+=-]+$' AND password ~ '[!@#$%^&*()_+=-]');
 
 ALTER TABLE Employee_catalogue
-ADD CONSTRAINT EMP_ROLE_CHECK CHECK (role ~ '^[A-Za-zА-Яа-яЁё]+$');
+ADD CONSTRAINT EMP_ROLE_CHECK CHECK (role ~ '^[A-Za-zА-Яа-яЁё ]+$');
 
 ALTER TABLE Employee_catalogue
 ADD CONSTRAINT EMP_WORK_NUMBER_CHECK CHECK (work_number ~ '^8-\d{3}-\d{3}$');
