@@ -335,6 +335,8 @@ END;
 $$;
 
 
+
+
 -- ПРАВКА ПРОЦЕДУР И ФУНКЦИЙ ОТ ДЕНЗЕЛЯ --
 ----------------------------------------------------------------------
 -- Процедура change_price_list
@@ -511,3 +513,168 @@ BEGIN
     );
 END;
 $$;
+
+
+
+----------------------------------------------------------------------
+-- Процедура price_formation
+-- Назначение: Обновление таблицы prices с установкой актуальных цен.
+
+CREATE OR REPLACE PROCEDURE price_formation(
+  IN p_date date DEFAULT CURRENT_DATE
+)
+LANGUAGE plpgsql AS
+$$
+DECLARE
+  v_product_id integer;
+  v_store_id integer;
+  v_main_price numeric(10, 2);
+  v_add_price numeric(10, 2);
+  v_price_list_id integer;
+  v_price_list_id_min integer;
+  v_price numeric(10, 2);
+  v_is_expired boolean;
+BEGIN
+  -- Просмотр всех продуктов в цикле
+  FOR v_product_id IN SELECT id_product FROM product_card LOOP
+    -- Получение идентификаторов магазина для продукта
+    SELECT
+      id_store
+    INTO
+      v_store_id
+    FROM
+      stock
+    WHERE
+      id_product = v_product_id
+    ORDER BY
+      date_create
+    DESC
+    LIMIT 1;
+
+    -- Проверка, есть ли у товара ссылка на таблицу цен
+    IF EXISTS(
+      SELECT
+        1
+      FROM
+        prices
+      WHERE
+        id_product = v_product_id
+    ) THEN
+      -- Получение текущей цены из таблицы цен
+      SELECT
+        main_price,
+        add_price,
+        price_list_id
+      INTO
+        v_main_price,
+        v_add_price,
+        v_price_list_id
+      FROM
+        prices
+      WHERE
+        id_product = v_product_id;
+
+      -- Проверка, отличается ли текущая цена от цены в таблице price_list
+      SELECT
+        final_price
+      INTO
+        v_price
+      FROM
+        price_list
+      WHERE
+        id_price_list = v_price_list_id;
+
+      IF v_price <> v_main_price THEN
+        -- Получение минимальной цены на товар и магазина из таблицы price_list
+        SELECT
+          id_price_list,
+          final_price
+        INTO
+          v_price_list_id_min,
+          v_main_price
+        FROM
+          price_list
+        WHERE
+          id_product = v_product_id
+          AND id_store = v_store_id
+          AND price_type = 0
+          AND date_create <= p_date
+        ORDER BY
+          final_price
+        LIMIT 1;
+
+        -- Обновление таблицы цен с помощью новой цены и идентификатора price_list
+        UPDATE
+          prices
+        SET
+          main_price = v_main_price,
+          price_list_id = v_price_list_id_min
+        WHERE
+          id_product = v_product_id;
+      END IF;
+    ELSE
+      -- Получение минимальной обычной цены на товар и магазина из таблицы price_list
+      SELECT
+        id_price_list,
+        final_price
+      INTO
+        v_price_list_id_min,
+        v_main_price
+      FROM
+        price_list
+      WHERE
+        id_product = v_product_id
+        AND id_store = v_store_id
+        AND price_type = 0
+        AND date_create <= p_date
+      ORDER BY
+        final_price
+      LIMIT 1;
+
+      -- Проверка, не истек ли срок годности продукта
+      SELECT
+        product_expired(v_product_id, p_date)
+      INTO
+        v_is_expired;
+
+      IF v_is_expired THEN
+        -- Получение минимальной цены оформления заказа для товара и магазина из таблицы price_list
+        SELECT
+          id_price_list,
+          final_price
+        INTO
+          v_price_list_id_min,
+          v_add_price
+        FROM
+          price_list
+        WHERE
+          id_product = v_product_id
+          AND id_store = v_store_id
+          AND price_type = 2
+          AND date_create <= p_date
+        ORDER BY
+          final_price
+        LIMIT 1;
+      END IF;
+
+      -- Вставка новой строки в таблицу цен
+      INSERT INTO
+        prices(
+          id_product,
+          main_price,
+          add_price,
+          price_list_id
+        )
+        VALUES(
+          v_product_id,
+          v_main_price,
+          v_add_price,
+          v_price_list_id_min
+        );
+    END IF;
+  END LOOP;
+END;
+$$;
+
+
+
