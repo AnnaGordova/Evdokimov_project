@@ -1,3 +1,4 @@
+-- Пройедура change_price_list 
 
 CREATE OR REPLACE PROCEDURE change_price_list(
     p_id_price_list price_list.id_price_list%type,
@@ -49,7 +50,7 @@ END;
 $$;
 
 
----------------------------------
+----------------------------------------------------------------------
 
 create FUNCTION trg_add_price_jr()
 RETURNS TRIGGER AS $$
@@ -68,9 +69,11 @@ ON price_list
 FOR EACH ROW
 EXECUTE FUNCTION trg_add_price_jr();
 
--------------------------------
+----------------------------------------------------------------------
 
 --- у меня нет таблиц sales, accepatance of goods
+
+-- Процедура price_formation
 
 CREATE OR REPLACE PROCEDURE price_formation(p_date DATE DEFAULT current_date)
 LANGUAGE plpgsql AS $$
@@ -126,8 +129,9 @@ END;
 $$;
 
 
------------------
+----------------------------------------------------------------------
 --- НЕТУ ТАБЛИЦ
+-- Функция product_expired
 
 CREATE OR REPLACE FUNCTION product_expired(
     p_id_product INT,
@@ -169,7 +173,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
---------------
+----------------------------------------------------------------------
+-- Тип stop_table
 
 CREATE TYPE stop_table AS (
     id_product INT,
@@ -177,6 +182,8 @@ CREATE TYPE stop_table AS (
     final_price NUMERIC(10, 2),
     start_price NUMERIC(10, 2)
 );
+
+-- Функция product_in_stop
 
 CREATE OR REPLACE FUNCTION product_in_stop()
 RETURNS SETOF stop_table AS $$
@@ -203,7 +210,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
---------------
+----------------------------------------------------------------------
+-- Тип new_prices
 
 CREATE TYPE new_prices AS (
     id_product INT,
@@ -216,6 +224,7 @@ CREATE TYPE new_prices AS (
 );
 
 -- НЕТУУУУУУУУУУУУУУУУУУУ
+-- Функция get_new_prices
 
 CREATE OR REPLACE FUNCTION get_new_prices(p_date DATE DEFAULT CURRENT_DATE)
 RETURNS SETOF new_prices AS $$
@@ -248,7 +257,8 @@ $$ LANGUAGE plpgsql;
 
 SELECT * FROM get_new_prices('2025-01-01');
 
-----------------------
+----------------------------------------------------------------------
+-- Процедура get_price_lists_for_product
 
 CREATE OR REPLACE PROCEDURE get_price_lists_for_product(
     p_id_product INT,
@@ -286,7 +296,8 @@ $$;
 
 
 
--------------------
+----------------------------------------------------------------------
+-- Процедура bind_price_list_to_product
 
 CREATE OR REPLACE PROCEDURE bind_price_list_to_product(
     p_id_price_list INT,
@@ -333,13 +344,15 @@ BEGIN
     RAISE NOTICE 'Price list % successfully bound to product % on date %', p_id_price_list, v_price_list.id_product, p_date;
 END;
 $$;
+----------------------------------------------------------------------
+
 
 
 
 
 -- ПРАВКА ПРОЦЕДУР И ФУНКЦИЙ ОТ ДЕНЗЕЛЯ --
 ----------------------------------------------------------------------
--- Процедура change_price_list
+-- 1) Процедура change_price_list
 -- Назначение: добавление новой строки в таблицу Write off, уменьшение количества товара на полке
 
 CREATE OR REPLACE PROCEDURE change_price_list(
@@ -517,7 +530,7 @@ $$;
 
 
 ----------------------------------------------------------------------
--- Процедура price_formation
+-- 2) Процедура price_formation
 -- Назначение: Обновление таблицы prices с установкой актуальных цен.
 
 CREATE OR REPLACE PROCEDURE price_formation(
@@ -678,3 +691,113 @@ $$;
 
 
 
+----------------------------------------------------------------------
+-- 3) Функция product_expired
+-- Назначение: Проверка на истекание срока годности у товара.
+
+CREATE OR REPLACE FUNCTION product_expired(
+  p_id_product integer,
+  p_date date DEFAULT CURRENT_DATE
+)
+RETURNS BOOLEAN AS
+$$
+DECLARE
+  v_expiration_date date;
+  v_quantity_sold integer;
+  v_quantity_accepted integer;
+  v_quantity_left integer;
+BEGIN
+  -- Поиск срока годности продукта
+  SELECT
+    expiration_date
+  INTO
+    v_expiration_date
+  FROM
+    product_card
+  WHERE
+    id_product = p_id_product;
+
+  -- Получение количества продуктов, проданных в период между датой истечения срока годности и текущей датой
+  SELECT
+    SUM(quantity)
+  INTO
+    v_quantity_sold
+  FROM
+    sale
+  WHERE
+    id_product = p_id_product
+    AND date_sale >= v_expiration_date
+    AND date_sale <= p_date;
+
+  -- Получение количества продуктов, принятых в период между датой истечения срока годности и текущей датой
+  SELECT
+    SUM(quantity)
+  INTO
+    v_quantity_accepted
+  FROM
+    acceptance_of_goods
+  WHERE
+    id_product = p_id_product
+    AND date_create >= v_expiration_date
+    AND date_create <= p_date;
+
+  -- Подсчет количества оставшихся продуктов
+  v_quantity_left := v_quantity_accepted - v_quantity_sold;
+
+  -- Возвращение значения true, если оставшееся количество продуктов составляет менее 10% от принятого количества, в противном случае вернется значение false
+  RETURN CASE
+    WHEN v_quantity_left < (v_quantity_accepted * 0.1) THEN true
+    ELSE false
+  END;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+
+----------------------------------------------------------------------
+-- 4) Функция get_new_prices
+-- Назначение: возвращает таблицу с товарами в стопе, которые передаются ГК.
+
+CREATE OR REPLACE FUNCTION get_new_prices(
+  P_date DATE DEFAULT CURRENT_DATE
+)
+RETURNS TABLE(
+  id_product integer,
+  name VARCHAR(255),
+  main_price NUMERIC(10, 2),
+  add_price NUMERIC(10, 2)
+) AS
+$$
+SELECT
+  p.id_product,
+  pc.name,
+  p.main_price,
+  p.add_price
+FROM
+  prices AS p
+JOIN
+  product_card AS pc
+  ON p.id_product = pc.id_product
+WHERE
+  p.date_create = P_date
+  AND pc.is_stop = true
+  AND NOT EXISTS(
+    SELECT
+      1
+    FROM
+      product_on_shelf AS pos
+    WHERE
+      pos.id_product = p.id_product
+      AND pos.quantity > 0
+  )
+  AND NOT EXISTS(
+    SELECT
+      1
+    FROM
+      promotion_catalogue AS pc
+    WHERE
+      pc.id_promotion = p.id_price_list
+  );
+$$
+LANGUAGE sql;
