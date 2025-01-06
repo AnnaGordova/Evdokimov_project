@@ -42,9 +42,17 @@ BEGIN
 		p_undertime := '00:00:00';
 	END IF;
 	
+	IF p_overtime < '00:30:00' THEN
+		p_overtime = '00:00:00';
+	END IF;
+	
 	IF p_total_time < p_norm_total_time THEN
 		p_undertime := p_norm_total_time - p_total_time;
 		p_overtime := '00:00:00';
+	END IF;
+	
+	IF p_undertime < '00:30:00' THEN
+		p_undertime = '00:00:00';
 	END IF;
 	
 	IF p_total_time = p_norm_total_time THEN
