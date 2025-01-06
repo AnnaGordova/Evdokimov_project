@@ -237,7 +237,7 @@ BEGIN
 END; 
 $$;
 
-CALL confirm_absence(17);
+--CALL confirm_absence(17);
 
 
 
@@ -258,4 +258,4 @@ BEGIN
 END; 
 $$;
 
-CALL add_supporting_document(13, 'заявление на отпуск');
+--CALL add_supporting_document(13, 'заявление на отпуск');
