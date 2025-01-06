@@ -196,3 +196,47 @@ END;
 $$;
 
 --CALL add_absence('03-06-2025', '10-06-2025', 'отпуск', 'заявление на отпуск',19);
+
+
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE confirm_absence(
+	p_id_absence absence.id_absence%type
+) 
+LANGUAGE plpgsql 
+AS $$
+
+BEGIN 
+
+	UPDATE Absence SET is_confirmed = 'подтвержден' 
+	WHERE (id_absence = p_id_absence AND NOT(type = 'больничный' 
+		   AND supporting_document IS NULL AND 
+		   CURRENT_DATE > date_start + INTERVAL '7 days'));
+END; 
+$$;
+
+CALL confirm_absence(17);
+
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE add_supporting_document(
+	p_id_absence absence.id_absence%type,
+	p_supporting_document absence.supporting_document%type
+) 
+LANGUAGE plpgsql 
+AS $$
+
+BEGIN 
+
+	UPDATE Absence SET supporting_document = p_supporting_document 
+	WHERE (id_absence = p_id_absence);
+END; 
+$$;
+
+CALL add_supporting_document(13, 'заявление на отпуск');

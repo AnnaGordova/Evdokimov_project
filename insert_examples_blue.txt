@@ -85,3 +85,7 @@ VALUES ('01-07-2020', '08-07-2020', 'отпуск', 'справка', 'подт�
 
 INSERT INTO Absence (date_start, date_end, type, supporting_document, is_confirmed, id_employee)
 VALUES ('01-08-2020', '18-07-2020', 'отпуск', 'справка', 'подтвержден', 19);
+
+--для confirm_absence--
+INSERT INTO Absence (date_start, date_end, type, supporting_document, is_confirmed, id_employee)
+VALUES ('28-12-2024', '29-12-2024', 'больничный', 'справка', 'подтвержден', 14);
