@@ -59,6 +59,11 @@ $$;
 
 --CALL add_worklog(14, '06-01-2025')
 
+
+
+
+
+
 CREATE OR REPLACE PROCEDURE generate_weekly_report_one(
     p_id_employee worklog.id_employee%type,
 	p_week_start_date DATE DEFAULT current_date,
@@ -103,6 +108,39 @@ $$;
 
 --CALL generate_weekly_report_one(14, '06-01-2025', '12-01-2025');
 --CALL generate_weekly_report_one(19, '06-01-2025', '12-01-2025');
+
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE generate_weekly_report(
+	p_week_start_date DATE DEFAULT current_date,
+    p_week_end_date DATE DEFAULT current_date
+	
+)
+
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+	rec RECORD;
+BEGIN
+   FOR rec in SELECT DISTINCT id_employee FROM worklog LOOP
+	  CALL generate_weekly_report_one(rec.id_employee, p_week_start_date, p_week_end_date);
+   END LOOP;
+END;
+$$;
+
+
+--CALL generate_weekly_report('06-01-2025', '12-01-2025');
+
+
+
+
+
+
+
+
 
 CREATE OR REPLACE PROCEDURE edit_and_confirm_weekly_report(
     p_id_weekly_report weekly_report.id_weekly_report%type,

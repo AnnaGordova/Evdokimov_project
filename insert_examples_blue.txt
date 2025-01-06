@@ -77,3 +77,11 @@ VALUES ('login', '08-01-2025','08:00:00', 19);
 
 INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
 VALUES ('logout', '08-01-2025','17:00:00', 19);
+
+---для add_absence---
+
+INSERT INTO Absence (date_start, date_end, type, supporting_document, is_confirmed, id_employee)
+VALUES ('01-07-2020', '08-07-2020', 'отпуск', 'справка', 'подтвержден', 19);
+
+INSERT INTO Absence (date_start, date_end, type, supporting_document, is_confirmed, id_employee)
+VALUES ('01-08-2020', '18-07-2020', 'отпуск', 'справка', 'подтвержден', 19);
