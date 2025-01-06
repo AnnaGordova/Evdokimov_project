@@ -55,12 +55,11 @@ CREATE TABLE Worklog
 (
 	id_worklog SERIAL PRIMARY KEY,
 	date_start DATE NOT NULL,
-	date_end DATE NOT NULL,
 	time_start TIME NOT NULL,
 	time_end TIME NOT NULL,
-	total_time NUMERIC(5, 2),
-	overtime NUMERIC(5, 2),
-	undertime NUMERIC(5, 2),
+	total_time TIME,
+	overtime TIME,
+	undertime TIME,
 	id_employee INTEGER NOT NULL REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
  
 );

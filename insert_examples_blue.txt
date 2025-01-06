@@ -8,5 +8,19 @@ VALUES ('Медбрат', 'Медбрат - это медицинский бра
 INSERT INTO Employee_catalogue (surname, name, patronymic, birth, subdivision, login, password,
 							   role, work_number, personal_number, email, gender, INN, SNILS, date_employment,
 							   citizenship, id_passport, id_post) 
-VALUES ('Пьянов', 'Ефим', 'Федорович', '03.01.2004', 'Отделпоборьбесалкоголизмом', 'pyan_fed', 'baltyka_9', 'Медбрат', 
+VALUES ('Пьянов', 'Ефим', 'Федорович', '03.01.2004', 'Отдел по борьбе с алкоголизмом', 'pyan_fed', 'baltyka_9', 'Медбрат', 
 		'8-800-333', '8-905-635-00-17', 'pyan_fed@mail.ru', 'м', '111111111111', '11111111111', '31.12.2024', 'РФ', 2, 1); 
+
+
+
+-------для add_worklog----
+
+INSERT INTO Schedule_template (day_week, time_start, time_end, id_post)
+VALUES ('ПН', '08:00:00', '17:00:00', 1);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('login', '06-01-2025','08:10:00', 14);
+
+INSERT INTO Employee_session (session_event, event_date, event_time, id_employee)
+VALUES ('logout', '06-01-2025','16:50:00', 14);
+
