@@ -137,7 +137,18 @@ $$;
 
 
 
+CREATE OR REPLACE PROCEDURE edit_and_confirm_weekly_report(
+    p_id_weekly_report weekly_report.id_weekly_report%type	
+)
 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	UPDATE Weekly_report SET is_confirmed = 'подтвержден'
+	WHERE id_weekly_report = p_id_weekly_report;
+
+END;
+$$;
 
 
 
