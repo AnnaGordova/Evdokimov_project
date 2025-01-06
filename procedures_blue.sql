@@ -102,6 +102,25 @@ END;
 $$;
 
 --CALL generate_weekly_report_one(14, '06-01-2025', '12-01-2025');
+--CALL generate_weekly_report_one(19, '06-01-2025', '12-01-2025');
+
+CREATE OR REPLACE PROCEDURE edit_and_confirm_weekly_report(
+    p_id_weekly_report weekly_report.id_weekly_report%type,
+	p_note weekly_report.note%type	
+)
+
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	UPDATE Weekly_report SET is_confirmed = 'подтвержден'
+	WHERE id_weekly_report = p_id_weekly_report;
+	
+	UPDATE Weekly_report SET note = p_note
+	WHERE id_weekly_report = p_id_weekly_report;
+END;
+$$;
+
+--CALL edit_and_confirm_weekly_report(2, 'уволить!');
 
 CREATE OR REPLACE PROCEDURE add_absence(
 	p_date_start absence.date_start%type,
