@@ -160,6 +160,12 @@ $$;
 
 --CALL edit_and_confirm_weekly_report(2, 'уволить!');
 
+
+
+
+
+
+
 CREATE OR REPLACE PROCEDURE add_absence(
 	p_date_start absence.date_start%type,
 	p_date_end absence.date_end%type,
@@ -168,11 +174,25 @@ CREATE OR REPLACE PROCEDURE add_absence(
   	p_id_employee absence.id_employee%type
 ) 
 LANGUAGE plpgsql 
-AS $$ 
+AS $$
+DECLARE 
+	p_relax_days INTEGER;
 BEGIN 
-	INSERT INTO Absence (date_start, date_end, type, supporting_document, is_confirmed, id_employee) 
-	VALUES (p_date_start, p_date_end, p_type, p_supporting_document, 'не подтвержден'); 
+	
+	SELECT SUM(date_end- date_start) FROM Absence 
+	WHERE (id_employee = 19 AND is_confirmed = 'подтвержден' 
+		AND type = 'отпуск' AND CURRENT_DATE - date_start > 2*365) 
+	INTO p_relax_days;
+	IF (p_date_end - p_date_start + p_relax_days < 84) THEN
+		INSERT INTO Absence (date_start, date_end, type, supporting_document, is_confirmed, id_employee) 
+		VALUES (p_date_start, p_date_end, p_type, p_supporting_document, 'не подтвержден', p_id_employee);
+	END IF;
+	
+	IF(p_date_end - p_date_start + p_relax_days >= 84) THEN 
+		RAISE EXCEPTION 'Условия предоставления отпуска не выполнены';
+	END IF;
+	
 END; 
 $$;
 
---CALL add_absence ('01.01.2025', '02.01.2025', 'Пьянка', 'Выписка из ывтрезвителя', 12)
+--CALL add_absence('03-06-2025', '10-06-2025', 'отпуск', 'заявление на отпуск',19);
