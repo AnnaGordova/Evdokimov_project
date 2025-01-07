@@ -795,44 +795,46 @@ LANGUAGE plpgsql;
 -- Назначение: возвращает таблицу с товарами в стопе, которые передаются ГК.
 
 CREATE OR REPLACE FUNCTION get_new_prices(
-  P_date DATE DEFAULT CURRENT_DATE
+    P_date DATE
 )
-RETURNS TABLE(
-  id_product integer,
-  name VARCHAR(255),
-  main_price NUMERIC(10, 2),
-  add_price NUMERIC(10, 2)
-) AS
-$$
-SELECT
-  p.id_product,
-  pc.name,
-  p.main_price,
-  p.add_price
-FROM
-  prices AS p
-JOIN
-  product_card AS pc
-  ON p.id_product = pc.id_product
-WHERE
-  p.date_create = P_date
-  AND pc.is_stop = true
-  AND NOT EXISTS(
-    SELECT
-      1
-    FROM
-      product_on_shelf AS pos
-    WHERE
-      pos.id_product = p.id_product
-      AND pos.quantity > 0
-  )
-  AND NOT EXISTS(
-    SELECT
-      1
-    FROM
-      promotion_catalogue AS pc
-    WHERE
-      pc.id_promotion = p.id_price_list
-  );
-$$
-LANGUAGE sql;
+RETURNS TABLE (
+    id_product INT,
+    name VARCHAR(255),
+    expiration_date DATE,
+    SKU VARCHAR(32),
+    barcode_number VARCHAR(13),
+    is_stop BOOLEAN,
+    main_price NUMERIC(10, 2),
+    entrance_price NUMERIC(10, 2),
+    final_price NUMERIC(10, 2),
+    price_type SMALLINT,
+    id_promotion INT
+)
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT
+            pc.id_product,
+            pc.name,
+            pc.expiration_date,
+            pc.SKU,
+            pc.barcode_number,
+            pc.is_stop,
+            pr.main_price,
+            pl.entrance_price,
+            pl.final_price,
+            pl.price_type,
+            pl.id_promotion
+        FROM Product_card AS pc
+        JOIN Prices AS pr
+            ON pc.id_price = pr.id_price
+        JOIN Price_list AS pl
+            ON pr.id_price_list = pl.id_price_list
+        LEFT JOIN Product_on_shelf AS pos
+            ON pc.id_product = pos.id_product
+        LEFT JOIN Promotion_catalogue AS promo
+            ON pl.id_promotion = promo.id_promotion
+        WHERE
+            pr.date_create = P_date AND pc.is_stop = TRUE;
+END;
+$$ LANGUAGE plpgsql;
