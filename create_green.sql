@@ -23,6 +23,24 @@ CREATE TABLE Driver_catalogue (
     CONSTRAINT driver_cat_pk PRIMARY KEY (id_driver)  -- Первичный ключ
 );
 
+-- Таблица Type_point_catalogue (ЖЕЛТАЯ)
+
+CREATE TABLE Type_point_catalogue (
+    id_type_point SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+-- Таблица Place_catalogue (ЖЕЛТАЯ)
+
+CREATE TABLE Place_catalogue (
+    id_place SERIAL, -- Код места хранения
+    id_point INT NOT NULL CONSTRAINT place_cat_point_fk REFERENCES Point(id_point), -- Код точки (ссылка на Point)
+    id_type_point INT NOT NULL CONSTRAINT place_cat_type_point_fk REFERENCES Type_Point_catalogue(id_type_point), -- Код типа точки (ссылка на Type Point catalogue)
+    activity VARCHAR(255) NOT NULL,
+	CONSTRAINT place_cat_pk PRIMARY KEY (id_place) -- Первичный ключ
+);
+
+
 -- Таблица Contract
 
 CREATE TABLE Contract (
@@ -99,23 +117,6 @@ CREATE TABLE Acceptance_of_goods (
     CONSTRAINT accept_good_pk PRIMARY KEY (id_accept_good)  -- Первичный ключ для id_accept_good
 );
 
-
--- Таблица Type_point_catalogue (ЖЕЛТАЯ - нет в тз)
-
-CREATE TABLE Type_point_catalogue (
-    id_type_point SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-);
-
--- Таблица Place_catalogue (ЖЕЛТАЯ)
-
-CREATE TABLE Place_catalogue (
-    id_place SERIAL, -- Код места хранения
-    id_point INT NOT NULL CONSTRAINT place_cat_point_fk REFERENCES Point(id_point), -- Код точки (ссылка на Point)
-    id_type_point INT NOT NULL CONSTRAINT place_cat_type_point_fk REFERENCES Type_Point_catalogue(id_type_point), -- Код типа точки (ссылка на Type Point catalogue)
-    activity VARCHAR(255) NOT NULL,
-	CONSTRAINT place_cat_pk PRIMARY KEY (id_place) -- Первичный ключ
-);
 
 -- Таблица Shelf
 
