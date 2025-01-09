@@ -372,5 +372,5 @@ CREATE TABLE Acceptance_of_goods (
     is_match BOOLEAN NOT NULL,
     comment TEXT,
     decision acceptance_decision  DEFAULT 'в ожидании',
-    UNIQUE (id_acceptance, id_product, quantity, date_create, is_match, comment, decision)  -- Уникальное ограничение на все поля
+    UNIQUE (id_acceptance, id_product, quantity, date_create, is_match)  -- Уникальное ограничение на все поля
 );
