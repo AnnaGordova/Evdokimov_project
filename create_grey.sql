@@ -91,3 +91,11 @@ ALTER TABLE manufacturer_catalogue ADD CONSTRAINT fk_manufacturer_country FOREIG
 ALTER TABLE prices ADD CONSTRAINT fk_price_card FOREIGN KEY (id_price_list) REFERENCES price_list (id_price_list);
 ALTER TABLE price_list ADD CONSTRAINT fk_price_promotion FOREIGN KEY (id_promotion) REFERENCES promotion_catalogue (id_promotion);
 ALTER TABLE product_category ADD CONSTRAINT fk_category_markup FOREIGN KEY (id_category_markup) REFERENCES markup_category (id_category_markup);
+
+--проверка на уникальность ИНН
+ALTER TABLE manufacturer_catalogue
+ADD CONSTRAINT unique_INN UNIQUE (INN);
+--проверка высоты и ширины > 0
+ALTER TABLE product_card
+ADD CONSTRAINT positive_height CHECK (height > 0),
+ADD CONSTRAINT positive_width CHECK (width > 0);
