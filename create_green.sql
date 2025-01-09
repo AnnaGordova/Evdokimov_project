@@ -318,4 +318,7 @@ CREATE TABLE Moving (
     -- Количество товара
     quantity INT CHECK (quantity > 0),  -- Количество товара для перемещения должно быть больше 0
     CONSTRAINT moving_quantity_ck CHECK (quantity > 0)  -- Условие: quantity > 0
-);
+); 
+
+ALTER TABLE Acceptance
+ADD CONSTRAINT acceptance_date_check CHECK (date_create <= CURRENT_TIMESTAMP AND date_create >= '2010-01-01 00:00:00');
