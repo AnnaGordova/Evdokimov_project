@@ -320,5 +320,10 @@ CREATE TABLE Moving (
     CONSTRAINT moving_quantity_ck CHECK (quantity > 0)  -- Условие: quantity > 0
 ); 
 
+
 ALTER TABLE Acceptance
 ADD CONSTRAINT acceptance_date_check CHECK (date_create <= CURRENT_TIMESTAMP AND date_create >= '2010-01-01 00:00:00');
+
+ ALTER TABLE Acceptance
+    ADD CONSTRAINT unique_acceptance
+    UNIQUE (id_employee, id_contract, id_truck, id_place, date_create);
