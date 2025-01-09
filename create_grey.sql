@@ -116,3 +116,10 @@ ADD CONSTRAINT date_range CHECK (date_create < date_end);
 --проверка процентов
 ALTER TABLE markup_category
 ADD CONSTRAINT percent_range CHECK (percent_markup >= 0 AND percent_markup <= 100);
+
+
+ALTER TABLE product_card 
+ALTER COLUMN id_price DROP NOT NULL;
+
+ALTER TABLE price_list 
+ALTER COLUMN id_promotion DROP NOT NULL;
