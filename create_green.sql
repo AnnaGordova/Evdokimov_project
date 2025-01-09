@@ -327,3 +327,6 @@ ADD CONSTRAINT acceptance_date_check CHECK (date_create <= CURRENT_TIMESTAMP AND
  ALTER TABLE Acceptance
     ADD CONSTRAINT unique_acceptance
     UNIQUE (id_employee, id_contract, id_truck, id_place, date_create);
+
+ALTER TABLE Acceptance
+    ALTER COLUMN status SET NOT NULL;
