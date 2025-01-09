@@ -1,3 +1,4 @@
+
 -- Товаровед — полный контроль над приёмкой и учётом товара
 
 CREATE ROLE commodity WITH LOGIN PASSWORD 'iamcommodity';
@@ -29,3 +30,4 @@ CREATE ROLE seller WITH LOGIN PASSWORD 'iamseller';
 
 -- Доступ на чтение/запись к таблице
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE Moving TO seller;
+
