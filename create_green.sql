@@ -106,7 +106,7 @@ CREATE TABLE Acceptance (
     id_truck INT NOT NULL CONSTRAINT accept_truck_fk REFERENCES Truck_catalogue(id_truck),  -- Код грузовика (ссылка на Truck catalogue)
     id_place INT NOT NULL CONSTRAINT accept_place_fk REFERENCES Place_catalogue(id_place),  -- Код точки магазина (ссылка на Place catalogue)
     date_create TIMESTAMP NOT NULL,  -- Дата приемки товара (NOT NULL)
-    status VARCHAR(20) CHECK (status IN ('в обработке', 'обработано', 'отклонено')) DEFAULT 'в обработке',  -- Статус приемки товара (с ограничением)
+    status VARCHAR(20) CHECK (status IN ('в обработке', 'обработано')) DEFAULT 'в обработке',  -- Статус приемки товара (с ограничением)
     CONSTRAINT accept_pk PRIMARY KEY (id_acceptance)  -- Первичный ключ для id_acceptance
 );
 
