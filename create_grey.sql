@@ -112,4 +112,7 @@ ALTER TABLE prices_jr
 ADD CONSTRAINT positive_new_price CHECK (new_price > 0);
 --проверка дат
 ALTER TABLE price_list
-ADD CONSTRAINT chk_date_range CHECK (date_create < date_end);
+ADD CONSTRAINT date_range CHECK (date_create < date_end);
+--проверка процентов
+ALTER TABLE markup_category
+ADD CONSTRAINT percent_range CHECK (percent_markup >= 0 AND percent_markup <= 100);
