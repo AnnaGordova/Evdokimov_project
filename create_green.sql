@@ -114,24 +114,18 @@ CREATE TABLE Acceptance (
 
 -- Таблица Acceptance_of_goods 
 
-
 -- Создание ENUM типа для столбца 'decision'
 CREATE TYPE acceptance_decision AS ENUM ('в ожидании', 'принять', 'отказать');
 
 CREATE TABLE Acceptance_of_goods (
-    id_accept_good SERIAL,  -- Код приемки товара (первичный ключ)
-    id_acceptance INT NOT NULL CONSTRAINT accept_good_acc_fk REFERENCES Acceptance(id_acceptance),  -- Код приемки (ссылка на таблицу Acceptance)
-    id_product INT NOT NULL CONSTRAINT accept_good_product_fk REFERENCES Product_card(id_product),  -- Код товара (ссылка на таблицу Product_card)
-    quantity INT NOT NULL,  -- Количество принятого товара
-    date_create TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- Дата создания приемки товара (по умолчанию текущее время)
-    is_match BOOLEAN NOT NULL,  -- Соответствие товара стандартам проверки
-    comment TEXT,  -- Комментарий (причины отказа или другого типа результата)
-    decision acceptance_decision NOT NULL DEFAULT 'в ожидании',  -- Статус решения (по умолчанию 'в ожидании')
-
-    CONSTRAINT accept_good_quantity_ck CHECK (quantity >= 0),  -- Ограничение для количества товара
-    CONSTRAINT accept_good_decision_ck CHECK (decision IN ('в ожидании', 'принять', 'отказать')),  -- Ограничение для значения столбца decision
-
-    CONSTRAINT accept_good_pk PRIMARY KEY (id_accept_good)  -- Первичный ключ для id_accept_good
+    id_accept_good SERIAL PRIMARY KEY,  -- Код приемки товара (первичный ключ)
+    id_acceptance INT NOT NULL CONSTRAINT accept_good_acc_fk REFERENCES Acceptance(id_acceptance),  -- Код приемки (ссылка на таблицу Acceptance)
+    id_product INT NOT NULL CONSTRAINT accept_good_product_fk REFERENCES Product_card(id_product),  -- Код товара (ссылка на таблицу Product_card)
+    quantity INT NOT NULL CHECK (quantity >= 0),  -- Количество принятого товара (Ограничение для количества товара)
+    date_create TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- Дата создания приемки товара (по умолчанию текущее время)
+    is_match BOOLEAN NOT NULL,  -- Соответствие товара стандартам проверки
+    comment TEXT,  -- Комментарий (причины отказа или другого типа результата)
+    decision acceptance_decision NOT NULL DEFAULT 'в ожидании'  -- Статус решения (по умолчанию 'в ожидании')
 );
 
 
@@ -328,5 +322,3 @@ ADD CONSTRAINT acceptance_date_check CHECK (date_create <= CURRENT_TIMESTAMP AND
     ADD CONSTRAINT unique_acceptance
     UNIQUE (id_employee, id_contract, id_truck, id_place, date_create);
 
-ALTER TABLE Acceptance
-    ALTER COLUMN status SET NOT NULL;
