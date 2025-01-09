@@ -13,15 +13,19 @@ CREATE TABLE Sale (
 
 -- Таблица Driver_catalogue 
 
+
 CREATE TABLE Driver_catalogue (
-    id_driver SERIAL,  -- Код водителя
-    first_name VARCHAR(50),  -- Имя водителя
-    last_name VARCHAR(50),  -- Фамилия водителя
-    date_of_birth DATE,  -- Дата рождения
-    license_number VARCHAR(20),  -- Номер водительского удостоверения
- 
-    CONSTRAINT driver_cat_pk PRIMARY KEY (id_driver)  -- Первичный ключ
-);
+        id_driver SERIAL,
+        first_name VARCHAR(50) NOT NULL,
+        last_name VARCHAR(50) NOT NULL,
+        date_of_birth DATE NOT NULL,
+        license_number VARCHAR(20) NOT NULL UNIQUE,
+        CONSTRAINT driver_cat_pk PRIMARY KEY (id_driver),
+        CONSTRAINT date_of_birth_driver_ck CHECK (
+            date_of_birth <= CURRENT_DATE - INTERVAL '18 years' AND 
+            date_of_birth >= CURRENT_DATE - INTERVAL '60 years'
+        )
+    );
 
 -- Таблица Type_point_catalogue (ЖЕЛТАЯ)
 
@@ -32,16 +36,19 @@ CREATE TABLE Type_point_catalogue (
 
 -- Таблица Place_catalogue (ЖЕЛТАЯ)
 
+
 CREATE TABLE Place_catalogue (
     id_place SERIAL, -- Код места хранения
     id_point INT NOT NULL CONSTRAINT place_cat_point_fk REFERENCES Point(id_point), -- Код точки (ссылка на Point)
     id_type_point INT NOT NULL CONSTRAINT place_cat_type_point_fk REFERENCES Type_Point_catalogue(id_type_point), -- Код типа точки (ссылка на Type Point catalogue)
     activity VARCHAR(255) NOT NULL,
-	CONSTRAINT place_cat_pk PRIMARY KEY (id_place) -- Первичный ключ
+  CONSTRAINT place_cat_pk PRIMARY KEY (id_place), -- Первичный ключ
+  CONSTRAINT place_cat_unique UNIQUE (id_point, id_type_point) --Ограничение уникальности комбинации
 );
 
 
 -- Таблица Contract
+
 
 CREATE TABLE Contract (
     id_contract SERIAL,  -- Код договора
@@ -51,19 +58,27 @@ CREATE TABLE Contract (
     date_create TIMESTAMP NOT NULL,  -- Дата поставки (NOT NULL)
     
     CONSTRAINT contract_date_nn CHECK (date_create IS NOT NULL),  -- Обязательное значение для поля
-    CONSTRAINT contract_pk PRIMARY KEY (id_contract)  -- Первичный ключ
+    CONSTRAINT contract_pk PRIMARY KEY (id_contract),  -- Первичный ключ
+     CONSTRAINT contract_date_check CHECK (date_create <= CURRENT_TIMESTAMP AND date_create >= '2010-01-01 00:00:00'),
+CONSTRAINT contract_unique UNIQUE (id_point, id_driver, id_contractor)
 );
+
+
+
 
 -- Таблица Car_catalogue (нет в ЕР Ангелины)
 
+
 CREATE TABLE Car_catalogue (
     id_car SERIAL,  -- Код автомобиля
-    brand VARCHAR(50),  -- Марка автомобиля
-    model VARCHAR(50),  -- Модель автомобиля
+    brand VARCHAR(50) NOT NULL,  -- Марка автомобиля
+    model VARCHAR(50) NOT NULL,  -- Модель автомобиля
     year INT,  -- Год выпуска автомобиля
     
-    CONSTRAINT car_pk PRIMARY KEY (id_car)  -- Первичный ключ для поля id_car
+    CONSTRAINT car_pk PRIMARY KEY (id_car),  -- Первичный ключ для поля id_car,
+    CONSTRAINT year_car_cat_ck CHECK (year >= 1990 AND year <= date_part('year', CURRENT_DATE))
 );
+
 
 -- Таблица Truck_catalogue (ЖЕЛТАЯ)
 
@@ -76,8 +91,10 @@ CREATE TABLE Truck_catalogue (
     CONSTRAINT truck_pk PRIMARY KEY (id_truck),  -- Первичный ключ для код грузовика
     CONSTRAINT truck_car_fk FOREIGN KEY (id_car) REFERENCES Car_catalogue(id_car),  -- Связь с таблицей Car catalogue
     CONSTRAINT truck_driver_fk FOREIGN KEY (id_driver) REFERENCES Driver_catalogue(id_driver),  -- Связь с таблицей Driver catalogue
-    CONSTRAINT truck_storage_fk FOREIGN KEY (id_storage) REFERENCES Place_catalogue(id_place)  -- Связь с таблицей Place catalogue
+    CONSTRAINT truck_storage_fk FOREIGN KEY (id_storage) REFERENCES Place_catalogue(id_place),  -- Связь с таблицей Place catalogue
+    CONSTRAINT truck_unique UNIQUE (id_car, id_driver, id_storage)
 );
+
 
 
 -- Таблица Acceptance
