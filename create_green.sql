@@ -112,23 +112,6 @@ CREATE TABLE Acceptance (
 
 
 
--- Таблица Acceptance_of_goods 
-
--- Создание ENUM типа для столбца 'decision'
-CREATE TYPE acceptance_decision AS ENUM ('в ожидании', 'принять', 'отказать');
-
-CREATE TABLE Acceptance_of_goods (
-    id_accept_good SERIAL PRIMARY KEY,  -- Код приемки товара (первичный ключ)
-    id_acceptance INT NOT NULL CONSTRAINT accept_good_acc_fk REFERENCES Acceptance(id_acceptance),  -- Код приемки (ссылка на таблицу Acceptance)
-    id_product INT NOT NULL CONSTRAINT accept_good_product_fk REFERENCES Product_card(id_product),  -- Код товара (ссылка на таблицу Product_card)
-    quantity INT NOT NULL CHECK (quantity >= 0),  -- Количество принятого товара (Ограничение для количества товара)
-    date_create TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- Дата создания приемки товара (по умолчанию текущее время)
-    is_match BOOLEAN NOT NULL,  -- Соответствие товара стандартам проверки
-    comment TEXT,  -- Комментарий (причины отказа или другого типа результата)
-    decision acceptance_decision NOT NULL DEFAULT 'в ожидании'  -- Статус решения (по умолчанию 'в ожидании')
-);
-
-
 -- Таблица Shelf
 
 -- Создаем тип ENUM для типа полки
@@ -315,10 +298,79 @@ CREATE TABLE Moving (
 ); 
 
 
+
+
+
+
+ALTER TABLE Driver_catalogue
+    ALTER COLUMN first_name SET NOT NULL;
+
+ALTER TABLE Driver_catalogue
+    ALTER COLUMN last_name SET NOT NULL;
+
+ALTER TABLE Driver_catalogue
+    ALTER COLUMN date_of_birth SET NOT NULL;
+
+ALTER TABLE Driver_catalogue
+    ALTER COLUMN license_number SET NOT NULL;
+
+ALTER TABLE Driver_catalogue
+    ADD CONSTRAINT license_number_unique UNIQUE (license_number);
+
+ALTER TABLE Driver_catalogue
+    ADD CONSTRAINT date_of_birth_driver_ck CHECK (
+        date_of_birth <= CURRENT_DATE - INTERVAL '18 years' AND 
+        date_of_birth >= CURRENT_DATE - INTERVAL '60 years'
+    );
+
+
+ALTER TABLE Place_catalogue
+    ADD CONSTRAINT place_cat_unique UNIQUE (id_point, id_type_point);
+
+
+-- Добавление ограничения NOT NULL на столбец brand
+ALTER TABLE Car_catalogue
+ALTER COLUMN brand SET NOT NULL;
+
+-- Добавление ограничения NOT NULL на столбец model
+ALTER TABLE Car_catalogue
+ALTER COLUMN model SET NOT NULL;
+
+-- Добавление ограничения CHECK для поля year
+ALTER TABLE Car_catalogue
+ADD CONSTRAINT year_car_cat_ck
+CHECK (year >= 1990 AND year <= date_part('year', CURRENT_DATE));
+
+
+-- Добавление уникального ограничения
+ALTER TABLE Truck_catalogue
+ADD CONSTRAINT truck_unique
+UNIQUE (id_car, id_driver, id_storage);
+
+
+ALTER TABLE Contract
+ADD CONSTRAINT contract_date_check CHECK (date_create <= CURRENT_TIMESTAMP AND date_create >= '2010-01-01 00:00:00');
+
 ALTER TABLE Acceptance
 ADD CONSTRAINT acceptance_date_check CHECK (date_create <= CURRENT_TIMESTAMP AND date_create >= '2010-01-01 00:00:00');
 
  ALTER TABLE Acceptance
     ADD CONSTRAINT unique_acceptance
     UNIQUE (id_employee, id_contract, id_truck, id_place, date_create);
+-- Таблица Acceptance_of_goods 
 
+
+-- Создание ENUM типа для столбца 'decision'
+CREATE TYPE acceptance_decision AS ENUM ('в ожидании', 'принять', 'отказать');
+
+CREATE TABLE Acceptance_of_goods (
+    id_accept_good SERIAL PRIMARY KEY,
+    id_acceptance INT NOT NULL CONSTRAINT accept_good_acc_fk REFERENCES Acceptance(id_acceptance),
+    id_product INT NOT NULL CONSTRAINT accept_good_product_fk REFERENCES Product_card(id_product),
+    quantity INT NOT NULL CHECK (quantity >= 0),
+    date_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP CHECK (date_create >= '2010-01-01' AND date_create <= CURRENT_TIMESTAMP),
+    is_match BOOLEAN NOT NULL,
+    comment TEXT,
+    decision acceptance_decision  DEFAULT 'в ожидании',
+    UNIQUE (id_acceptance, id_product, quantity, date_create, is_match, comment, decision)  -- Уникальное ограничение на все поля
+);
