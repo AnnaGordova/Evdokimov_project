@@ -99,3 +99,18 @@ ADD CONSTRAINT unique_INN UNIQUE (INN);
 ALTER TABLE product_card
 ADD CONSTRAINT positive_height CHECK (height > 0),
 ADD CONSTRAINT positive_width CHECK (width > 0);
+--проверка на цены
+ALTER TABLE price_list
+ADD CONSTRAINT positive_prices CHECK (entrance_price > 0 AND final_price > 0);
+
+ALTER TABLE prices
+ADD CONSTRAINT positive_main_price CHECK (main_price > 0);
+
+ALTER TABLE prices
+ADD CONSTRAINT positive_add_price CHECK (add_price >= 0);
+
+ALTER TABLE prices_jr
+ADD CONSTRAINT positive_old_price CHECK (old_price > 0);
+
+ALTER TABLE prices_jr
+ADD CONSTRAINT positive_new_price CHECK (new_price > 0);
