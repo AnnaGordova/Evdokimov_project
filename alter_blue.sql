@@ -136,7 +136,7 @@ ALTER TABLE Contractor_catalogue
 ADD CONSTRAINT CONTRACTOR_OGRN_CHECK CHECK (OGRN ~ '^\d{13}$');
 
 ALTER TABLE Contractor_catalogue
-ADD CONSTRAINT CONTRACTOR_FORM_CHECK CHECK (ownership_form ~ '^[A-ZА-ЯЁ][a-zа-яё]+(-[A-ZА-ЯЁ][a-zа-яё]+)*$');
+ADD CONSTRAINT CONTRACTOR_FORM_CHECK CHECK (ownership_form ~ '^[A-Za-zА-Яа-яЁё]+$');
 
 ALTER TABLE Contractor_catalogue
 ADD CONSTRAINT CONTRACTOR_SITE_CHECK CHECK (site ~* '^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(/[\w&%+/$=]*)?$');
