@@ -69,7 +69,6 @@ ADD CONSTRAINT POST_OKZ_CHECK CHECK (OKZ_code ~ '^\d{3}\.\d{3}$');
 
 
 
-
 ALTER TABLE Rate_catalogue
 ADD CONSTRAINT RATE_NAME_CHECK CHECK (name ~ '^[а-яА-ЯёЁ\s-]+$');
 
@@ -191,6 +190,8 @@ ADD CONSTRAINT ABSENCE_TYPE_CHECK CHECK (type ~ '^[a-zA-Zа-яА-Я0-9,.\(\)/ -]
 ALTER TABLE Absence
 ADD CONSTRAINT ABSENCE_DOC_CHECK CHECK (supporting_document ~ '^[a-zA-Zа-яА-Я0-9,.\(\)/ -]*$');
 
+ALTER TABLE Absence
+ADD CONSTRAINT ABSENCE_CONFIRMED_NN CHECK (is_confirmed is NOT NULL);
 
 
 

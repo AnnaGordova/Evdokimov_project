@@ -4,7 +4,6 @@ CREATE TYPE enum_citizenship_Employee_catalogue AS ENUM('РФ', 'Иностра�
 CREATE TYPE enum_is_confirmed_Weekly_report AS ENUM('подтвержден', 'не подтвержден');
 CREATE TYPE enum_is_confirmed_Absence AS ENUM('подтвержден', 'не подтвержден');
 CREATE TYPE enum_currency_Rate_catalogue AS ENUM('USD', 'EUR', 'RUB', 'GBP', 'JPY');
-CREATE TYPE enum_day_week_Schedule_template AS ENUM('ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС');
 CREATE TYPE enum_session_event_Employee_session AS ENUM('login', 'logout');
 
 CREATE TABLE Passport_catalogue 
@@ -19,7 +18,7 @@ CREATE TABLE Passport_catalogue
 CREATE TABLE Post_catalogue
 (
 	id_post SERIAL PRIMARY KEY,
-	name VARCHAR(255) NOT NULL,
+	name VARCHAR(255) NOT NULL UNIQUE,
 	description TEXT NOT NULL,
 	skill_level enum_skill_level_Post_catalogue NOT NULL,
 	OKZ_code CHAR(7) NOT NULL UNIQUE,
@@ -80,7 +79,7 @@ CREATE TABLE Absence
 	date_end DATE NOT NULL,
 	type VARCHAR(255) NOT NULL,
 	supporting_document VARCHAR(255),
-	is_confirmed enum_is_confirmed_Absence,
+	is_confirmed enum_is_confirmed_Absence NOT NULL,
 	id_employee INTEGER NOT NULL REFERENCES Employee_catalogue (id_employee) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -111,7 +110,6 @@ CREATE TABLE Worktime_catalogue
 CREATE TABLE Schedule_template
 (
 	id_template SERIAL PRIMARY KEY,
-	day_week enum_day_week_Schedule_template NOT NULL,
 	time_start TIME NOT NULL,
 	time_end TIME NOT NULL,
 	id_post INTEGER NOT NULL REFERENCES Post_catalogue (id_post) ON DELETE CASCADE ON UPDATE CASCADE
@@ -137,7 +135,7 @@ CREATE TABLE Contact_catalogue
 (
 	id_contact SERIAL PRIMARY KEY,
 	surname VARCHAR(255) NOT NULL,
-	name VARCHAR(255) NOT NULL,
+	name VARCHAR(255) NOT NULL UNIQUE,
 	patronymic VARCHAR(255),
 	post VARCHAR(100) NOT NULL,
 	phone CHAR(15) NOT NULL UNIQUE,
